@@ -1,0 +1,390 @@
+{"results": {
+  "activities": [
+    {
+      "activity": {
+        "activityId": 1211725706,
+        "activityName": "Running",
+        "activityDescription": "",
+        "activityVideoUrl": "",
+        "locationName": "",
+        "isTitled": true,
+        "isElevationCorrected": false,
+        "isBarometricCapable": false,
+        "isSwimAlgorithmCapable": false,
+        "isVideoCapable": false,
+        "isActivityEdited": false,
+        "favorite": false,
+        "ispr": false,
+        "isAutoCalcCalories": false,
+        "isParent": false,
+        "parentId": 0,
+        "userId": 33542707,
+        "username": "garmintest@weizilla.com",
+        "displayname": "Weizilla-Test",
+        "uploadDate": {
+          "@class": "org.apache.xerces.jaxp.datatype.XMLGregorianCalendarImpl",
+          "display": "Mon, Jun 13, 2016 9:05 PM",
+          "value": "2016-06-13",
+          "withDay": "Mon, Jun 13, 2016",
+          "abbr": "Jun 13, 2016",
+          "millis": "1465851917000"
+        },
+        "uploadApplication": {
+          "display": "Unknown",
+          "key": "unknown",
+          "version": "16.12.0.3"
+        },
+        "device": {
+          "display": "Garmin Forerunner 70",
+          "key": "forerunner70",
+          "version": "2.10.0.0"
+        },
+        "deviceId": "1324221",
+        "deviceImageUrl": "https://static.garmincdn.com/com.garmin.connect/content/images/device-images/fr-70.png",
+        "isDeviceReleased": true,
+        "externalId": "2016-06-12T11:56:05.000Z",
+        "privacy": {
+          "display": "Private",
+          "key": "private",
+          "fieldNameDisplay": "Privacy"
+        },
+        "numTrackpoints": -1,
+        "activityType": {
+          "display": "Running",
+          "key": "running",
+          "fieldNameDisplay": "Activity Type",
+          "parent": {
+            "display": "Running",
+            "key": "running",
+            "fieldNameDisplay": "Activity Type"
+          }
+        },
+        "eventType": {
+          "display": "Uncategorized",
+          "key": "uncategorized",
+          "fieldNameDisplay": "Event Type"
+        },
+        "activityTimeZone": {
+          "display": "(GMT) Greenwich Mean Time",
+          "key": "gmt",
+          "fieldNameDisplay": "Time Zone",
+          "abbr": "Greenwich Mean Time"
+        },
+        "localizedSpeedLabel": "Speed",
+        "localizedPaceLabel": "Pace",
+        "activitySummary": {
+          "MinRunCadence": {
+            "fieldDisplayName": "MinRunCadence",
+            "display": "0",
+            "displayUnit": "Steps per Minute",
+            "value": "0.0",
+            "unitAbbr": "spm",
+            "withUnit": "0 Steps per Minute",
+            "withUnitAbbr": "0 spm",
+            "uom": "stepsPerMinute"
+          },
+          "SumSampleCountDuration": {
+            "fieldDisplayName": "SumSampleCountDuration",
+            "display": "889",
+            "displayUnit": "Samples",
+            "value": "889.0",
+            "unitAbbr": "Samples",
+            "withUnit": "889 Samples",
+            "withUnitAbbr": "889 Samples",
+            "uom": "sampleCount"
+          },
+          "MinSpeed": {
+            "fieldDisplayName": "Min Speed",
+            "display": "0.1",
+            "displayUnit": "Miles per Hour",
+            "value": "0.10918171472351468",
+            "unitAbbr": "mph",
+            "withUnit": "0.1 Miles per Hour",
+            "withUnitAbbr": "0.1 mph",
+            "uom": "mph"
+          },
+          "MinPace": {
+            "fieldDisplayName": "MinPace",
+            "display": "--:--",
+            "displayUnit": "Minutes per Mile",
+            "value": "-Infinity",
+            "unitAbbr": "min/mi",
+            "withUnit": "--:-- Minutes per Mile",
+            "withUnitAbbr": "--:-- min/mi",
+            "uom": "minpermile"
+          },
+          "MaxSpeed": {
+            "fieldDisplayName": "Max Speed",
+            "display": "7.3",
+            "displayUnit": "Miles per Hour",
+            "value": "7.252147689237711",
+            "unitAbbr": "mph",
+            "withUnit": "7.3 Miles per Hour",
+            "withUnitAbbr": "7.3 mph",
+            "uom": "mph"
+          },
+          "MaxPace": {
+            "fieldDisplayName": "Best Pace",
+            "display": "08:16",
+            "displayUnit": "Minutes per Mile",
+            "value": "8.273411211556109",
+            "unitAbbr": "min/mi",
+            "withUnit": "08:16 Minutes per Mile",
+            "withUnitAbbr": "08:16 min/mi",
+            "uom": "minpermile"
+          },
+          "SumEnergy": {
+            "fieldDisplayName": "Calories",
+            "display": "884",
+            "displayUnit": "Calories",
+            "value": "884.0053269435468",
+            "unitAbbr": "C",
+            "withUnit": "884 Calories",
+            "withUnitAbbr": "884 C",
+            "uom": "kilocalorie"
+          },
+          "MaxDoubleCadence": {
+            "fieldDisplayName": "Max Run Cadence",
+            "display": "176",
+            "displayUnit": "Steps per Minute",
+            "value": "176.0",
+            "unitAbbr": "spm",
+            "withUnit": "176 Steps per Minute",
+            "withUnitAbbr": "176 spm",
+            "uom": "stepsPerMinute"
+          },
+          "MaxRunCadence": {
+            "fieldDisplayName": "Max Run Cadence",
+            "display": "88",
+            "displayUnit": "Steps per Minute",
+            "value": "88.0",
+            "unitAbbr": "spm",
+            "withUnit": "88 Steps per Minute",
+            "withUnitAbbr": "88 spm",
+            "uom": "stepsPerMinute"
+          },
+          "SumElapsedDuration": {
+            "fieldDisplayName": "Elapsed Time",
+            "display": "01:13:55",
+            "displayUnit": "Hours:Minutes:Seconds",
+            "value": "4435.0",
+            "unitAbbr": "h:m:s",
+            "withUnit": "01:13:55 Hours:Minutes:Seconds",
+            "withUnitAbbr": "01:13:55 h:m:s",
+            "uom": "second"
+          },
+          "WeightedMeanDoubleCadence": {
+            "fieldDisplayName": "Avg Run Cadence",
+            "display": "160",
+            "displayUnit": "Steps per Minute",
+            "value": "160.0",
+            "unitAbbr": "spm",
+            "withUnit": "160 Steps per Minute",
+            "withUnitAbbr": "160 spm",
+            "uom": "stepsPerMinute"
+          },
+          "WeightedMeanRunCadence": {
+            "fieldDisplayName": "Avg Run Cadence",
+            "display": "80",
+            "displayUnit": "Steps per Minute",
+            "value": "80.0",
+            "unitAbbr": "spm",
+            "withUnit": "80 Steps per Minute",
+            "withUnitAbbr": "80 spm",
+            "uom": "stepsPerMinute"
+          },
+          "SumSampleCountDistance": {
+            "fieldDisplayName": "SumSampleCountDistance",
+            "display": "889",
+            "displayUnit": "Samples",
+            "value": "889.0",
+            "unitAbbr": "Samples",
+            "withUnit": "889 Samples",
+            "withUnitAbbr": "889 Samples",
+            "uom": "sampleCount"
+          },
+          "SumMovingDuration": {
+            "fieldDisplayName": "Moving Time",
+            "display": "01:10:20",
+            "displayUnit": "Hours:Minutes:Seconds",
+            "value": "4220.0",
+            "unitAbbr": "h:m:s",
+            "withUnit": "01:10:20 Hours:Minutes:Seconds",
+            "withUnitAbbr": "01:10:20 h:m:s",
+            "uom": "second"
+          },
+          "SumSampleCountSpeed": {
+            "fieldDisplayName": "SumSampleCountSpeed",
+            "display": "854",
+            "displayUnit": "Samples",
+            "value": "854.0",
+            "unitAbbr": "Samples",
+            "withUnit": "854 Samples",
+            "withUnitAbbr": "854 Samples",
+            "uom": "sampleCount"
+          },
+          "WeightedMeanSpeed": {
+            "fieldDisplayName": "Avg Speed",
+            "display": "5.7",
+            "displayUnit": "Miles per Hour",
+            "value": "5.708562824073613",
+            "unitAbbr": "mph",
+            "withUnit": "5.7 Miles per Hour",
+            "withUnitAbbr": "5.7 mph",
+            "uom": "mph"
+          },
+          "WeightedMeanPace": {
+            "fieldDisplayName": "Avg Pace",
+            "display": "10:31",
+            "displayUnit": "Minutes per Mile",
+            "value": "10.510526352968151",
+            "unitAbbr": "min/mi",
+            "withUnit": "10:31 Minutes per Mile",
+            "withUnitAbbr": "10:31 min/mi",
+            "uom": "minpermile"
+          },
+          "SumDuration": {
+            "fieldDisplayName": "Time",
+            "display": "01:14:03",
+            "displayUnit": "Hours:Minutes:Seconds",
+            "value": "4443.141",
+            "unitAbbr": "h:m:s",
+            "withUnit": "01:14:03 Hours:Minutes:Seconds",
+            "withUnitAbbr": "01:14:03 h:m:s",
+            "uom": "second"
+          },
+          "SumSampleCountMovingDuration": {
+            "fieldDisplayName": "SumSampleCountMovingDuration",
+            "display": "889",
+            "displayUnit": "Samples",
+            "value": "889.0",
+            "unitAbbr": "Samples",
+            "withUnit": "889 Samples",
+            "withUnitAbbr": "889 Samples",
+            "uom": "sampleCount"
+          },
+          "SumDistance": {
+            "fieldDisplayName": "Distance",
+            "display": "7.05",
+            "displayUnit": "Miles",
+            "value": "7.0455415374214585",
+            "unitAbbr": "mi",
+            "withUnit": "7.05 Miles",
+            "withUnitAbbr": "7.05 mi",
+            "uom": "mile"
+          },
+          "SumSampleCountRunCadence": {
+            "fieldDisplayName": "SumSampleCountRunCadence",
+            "display": "888",
+            "displayUnit": "Samples",
+            "value": "888.0",
+            "unitAbbr": "Samples",
+            "withUnit": "888 Samples",
+            "withUnitAbbr": "888 Samples",
+            "uom": "sampleCount"
+          },
+          "SumSampleCountElapsedDuration": {
+            "fieldDisplayName": "SumSampleCountElapsedDuration",
+            "display": "889",
+            "displayUnit": "Samples",
+            "value": "889.0",
+            "unitAbbr": "Samples",
+            "withUnit": "889 Samples",
+            "withUnitAbbr": "889 Samples",
+            "uom": "sampleCount"
+          },
+          "SumSampleCountTimestamp": {
+            "fieldDisplayName": "SumSampleCountTimestamp",
+            "display": "889",
+            "displayUnit": "Samples",
+            "value": "889.0",
+            "unitAbbr": "Samples",
+            "withUnit": "889 Samples",
+            "withUnitAbbr": "889 Samples",
+            "uom": "sampleCount"
+          },
+          "SumSampleCountMovingSpeed": {
+            "fieldDisplayName": "SumSampleCountMovingSpeed",
+            "display": "845",
+            "displayUnit": "Samples",
+            "value": "845.0",
+            "unitAbbr": "Samples",
+            "withUnit": "845 Samples",
+            "withUnitAbbr": "845 Samples",
+            "uom": "sampleCount"
+          },
+          "BeginTimestamp": {
+            "fieldDisplayName": "Start",
+            "display": "Sun, Jun 12, 2016 11:56 AM",
+            "displayUnit": "",
+            "value": "2016-06-12T11:56:05.000Z",
+            "unitAbbr": "Greenwich Mean Time",
+            "withUnit": "Sun, Jun 12, 2016 11:56 AM ",
+            "withUnitAbbr": "Sun, Jun 12, 2016 11:56 AM Greenwich Mean Time",
+            "uom": "gmt"
+          },
+          "EndTimestamp": {
+            "fieldDisplayName": "EndTimestamp",
+            "display": "Sun, Jun 12, 2016 1:10 PM",
+            "displayUnit": "",
+            "value": "2016-06-12T13:10:06.000Z",
+            "unitAbbr": "Greenwich Mean Time",
+            "withUnit": "Sun, Jun 12, 2016 1:10 PM ",
+            "withUnitAbbr": "Sun, Jun 12, 2016 1:10 PM Greenwich Mean Time",
+            "uom": "gmt"
+          },
+          "WeightedMeanMovingSpeed": {
+            "fieldDisplayName": "Avg Moving Speed",
+            "display": "6.0",
+            "displayUnit": "Miles per Hour",
+            "value": "6.010414581686553",
+            "unitAbbr": "mph",
+            "withUnit": "6.0 Miles per Hour",
+            "withUnitAbbr": "6.0 mph",
+            "uom": "mph"
+          },
+          "WeightedMeanMovingPace": {
+            "fieldDisplayName": "Avg Moving Pace",
+            "display": "09:59",
+            "displayUnit": "Minutes per Mile",
+            "value": "9.982672440403219",
+            "unitAbbr": "min/mi",
+            "withUnit": "09:59 Minutes per Mile",
+            "withUnitAbbr": "09:59 min/mi",
+            "uom": "minpermile"
+          }
+        },
+        "totalLaps": {},
+        "garminSwimAlgorithm": false,
+        "updatedDate": {
+          "@class": "sql-timestamp",
+          "$": "2016-06-13 21:05:17.0"
+        },
+        "updatedDateFormatted": "2016-06-13 21:05:17.0 GMT",
+        "userRoles": [
+          "ROLE_CONNECTUSER",
+          "ROLE_FITNESS_USER",
+          "ROLE_CONNECT_2_USER"
+        ]
+      }
+    }
+  ],
+  "totalFound": 1,
+  "currentPage": 1,
+  "totalPages": 1,
+  "query": {
+    "filters": {
+      "parent_id": "",
+      "parent_id_oper": "is",
+      "userId": "33542707",
+      "userId_oper": "="
+    },
+    "sortOrder": "DESC",
+    "sortField": "activitySummaryBeginTimestampGmt",
+    "activityStart": "0",
+    "activitiesPerPage": "20",
+    "explore": "false",
+    "ignoreUntitled": "false",
+    "ignoreNonGPS": "false"
+  }
+}}
