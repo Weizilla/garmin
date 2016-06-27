@@ -5,9 +5,9 @@ import com.weizilla.garmin.fetcher.request.GetActivitiesRequestFactory;
 import com.weizilla.garmin.fetcher.request.HeadTicketRequestFactory;
 import com.weizilla.garmin.fetcher.request.LoginRequestFactory;
 import com.weizilla.garmin.fetcher.request.LtLookupRequestFactory;
-import com.weizilla.garmin.fetcher.request.Request;
 import com.weizilla.garmin.fetcher.request.RequestFactory;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -38,18 +38,19 @@ public class ActivitiesFetcher
         {
             for (RequestFactory factory : factories)
             {
-                Request request = factory.create(lastResult);
-                try (CloseableHttpResponse response = client.execute(request.getHttpRequest()))
-                {
-                    lastResult = request.isExtractResult() ? EntityUtils.toString(response.getEntity()) : null;
-                    if (request.isFinalStep())
-                    {
-                        return lastResult;
-                    }
-                }
-                Thread.sleep(RATE_LIMIT_MS);
+                lastResult = execute(factory, lastResult, client);
             }
         }
         return lastResult;
+    }
+
+    private static String execute(RequestFactory factory, String lastResult, CloseableHttpClient httpClient) throws Exception
+    {
+        HttpRequestBase request = factory.create(lastResult);
+        Thread.sleep(RATE_LIMIT_MS);
+        try (CloseableHttpResponse response = httpClient.execute(request))
+        {
+            return factory.isExtractResult() ? EntityUtils.toString(response.getEntity()) : null;
+        }
     }
 }

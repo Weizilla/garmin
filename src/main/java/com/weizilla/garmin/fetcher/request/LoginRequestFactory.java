@@ -30,18 +30,13 @@ public class LoginRequestFactory extends RequestFactory
     }
 
     @Override
-    public Request create(String prevResult) throws IOException
-    {
-        return new Request(createHttpRequest(prevResult), false, true);
-    }
-
-    private HttpRequestBase createHttpRequest(String lastResult)
+    public HttpRequestBase create(String prevResult) throws IOException
     {
         List<NameValuePair> data = new ArrayList<>();
         data.addAll(PARAMS);
         data.add(new BasicNameValuePair("username", username));
         data.add(new BasicNameValuePair("password", password));
-        data.add(new BasicNameValuePair("lt", parseLt(lastResult)));
+        data.add(new BasicNameValuePair("lt", parseLt(prevResult)));
 
         HttpPost request = new HttpPost("https://sso.garmin.com/sso/login" + PARAMS_URL);
         request.setEntity(new UrlEncodedFormEntity(data, StandardCharsets.UTF_8));
@@ -52,5 +47,11 @@ public class LoginRequestFactory extends RequestFactory
     {
         Document doc = Jsoup.parse(lastResult);
         return doc.select("input[name=lt]").first().attr("value");
+    }
+
+    @Override
+    public boolean isExtractResult()
+    {
+        return true;
     }
 }

@@ -1,6 +1,7 @@
 package com.weizilla.garmin.fetcher.request;
 
 import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -22,5 +23,7 @@ public abstract class RequestFactory
         PARAMS_URL = "?" + URLEncodedUtils.format(params, StandardCharsets.UTF_8);
     }
 
-    public abstract Request create(String prevResult) throws IOException;
+    public abstract HttpRequestBase create(String prevResult) throws IOException;
+
+    public abstract boolean isExtractResult();
 }

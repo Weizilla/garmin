@@ -14,15 +14,10 @@ import java.util.regex.Pattern;
 public class HeadTicketRequestFactory extends RequestFactory
 {
     @Override
-    public Request create(String prevResult) throws IOException
-    {
-        return new Request(createHttpRequest(prevResult), false, false);
-    }
-
-    private static HttpRequestBase createHttpRequest(String lastResult) throws IOException
+    public HttpRequestBase create(String prevResult) throws IOException
     {
         Pattern ticketPattern = Pattern.compile("ticket=(.*)'");
-        Matcher matcher = ticketPattern.matcher(lastResult);
+        Matcher matcher = ticketPattern.matcher(prevResult);
         if (matcher.find())
         {
             String ticket = matcher.group(1);
@@ -32,5 +27,11 @@ public class HeadTicketRequestFactory extends RequestFactory
             return new HttpHead(fullTicketUrl);
         }
         throw new IOException("Ticket not found in resulting html");
+    }
+
+    @Override
+    public boolean isExtractResult()
+    {
+        return false;
     }
 }
