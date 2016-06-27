@@ -1,10 +1,10 @@
-package com.weizilla.garmin.fetcher.step;
+package com.weizilla.garmin.fetcher.request;
 
 import com.google.common.collect.Lists;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Login extends FetchStep
+public class LoginRequestFactory extends RequestFactory
 {
     private static final BasicNameValuePair EVENT_ID = new BasicNameValuePair("_eventId", "submit");
     private static final BasicNameValuePair EMBED = new BasicNameValuePair("embed", "true");
@@ -23,14 +23,19 @@ public class Login extends FetchStep
     private final String username;
     private final String password;
 
-    public Login(String username, String password)
+    public LoginRequestFactory(String username, String password)
     {
         this.username = username;
         this.password = password;
     }
 
     @Override
-    public String execute(String lastResult, CloseableHttpClient httpClient) throws IOException
+    public Request create(String prevResult) throws IOException
+    {
+        return new Request(createHttpRequest(prevResult), false, true);
+    }
+
+    private HttpRequestBase createHttpRequest(String lastResult)
     {
         List<NameValuePair> data = new ArrayList<>();
         data.addAll(PARAMS);
@@ -40,7 +45,7 @@ public class Login extends FetchStep
 
         HttpPost request = new HttpPost("https://sso.garmin.com/sso/login" + PARAMS_URL);
         request.setEntity(new UrlEncodedFormEntity(data, StandardCharsets.UTF_8));
-        return executeRequest(request, httpClient);
+        return request;
     }
 
     private static String parseLt(String lastResult)
