@@ -44,4 +44,16 @@ public class Activity
     {
         return distance;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Activity{" +
+            "id=" + id +
+            ", type='" + type + '\'' +
+            ", duration=" + duration +
+            ", start=" + start +
+            ", distance=" + distance +
+            '}';
+    }
 }

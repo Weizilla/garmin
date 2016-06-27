@@ -88,7 +88,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.weizilla.garmin.connect.GarminConnectCli</mainClass>
+                                    <mainClass>com.weizilla.garmin.cli.ActivityDownloader</mainClass>
                                 </transformer>
                             </transformers>
                             <finalName>garmin-connect-cli</finalName>
