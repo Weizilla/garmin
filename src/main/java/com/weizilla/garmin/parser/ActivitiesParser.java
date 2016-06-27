@@ -8,6 +8,7 @@ import com.weizilla.garmin.entity.Activity;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,11 +27,21 @@ public class ActivitiesParser
 
     public List<Activity> parse(String json) throws IOException
     {
+        if (json == null || json.trim().isEmpty())
+        {
+            return Collections.emptyList();
+        }
+
         JsonNode jsonNode = MAPPER.readTree(json);
         Iterator<JsonNode> activities = jsonNode.at("/results/activities").elements();
+        return parseActivities(activities);
+    }
+
+    private static List<Activity> parseActivities(Iterator<JsonNode> activities)
+    {
         return toStream(activities)
             .map(n -> n.get("activity"))
-            .map(ActivitiesParser::parse)
+            .map(ActivitiesParser::parseActivity)
             .collect(Collectors.toList());
     }
 
@@ -40,7 +51,7 @@ public class ActivitiesParser
         return StreamSupport.stream(iterable.spliterator(), false);
     }
 
-    private static Activity parse(JsonNode jsonNode)
+    private static Activity parseActivity(JsonNode jsonNode)
     {
         long activityId = jsonNode.at("/activityId").asLong();
         String type = jsonNode.at("/activityType/key").asText();

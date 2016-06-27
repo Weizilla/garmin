@@ -36,4 +36,12 @@ public class ActivitiesParserTest
         assertThat(activity.getDistance()).isCloseTo(11.34588, within(0.1));
         assertThat(activity.getStart()).isEqualTo(Instant.parse("2016-06-12T11:56:05.000Z"));
     }
+
+    @Test
+    public void returnsEmptyListForNullOrEmptyInput() throws Exception
+    {
+        assertThat(parser.parse("")).isEmpty();
+        assertThat(parser.parse("         ")).isEmpty();
+        assertThat(parser.parse(null)).isEmpty();
+    }
 }
