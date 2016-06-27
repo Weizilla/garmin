@@ -2,6 +2,7 @@ package com.weizilla.garmin.cli;
 
 import com.weizilla.garmin.entity.Activity;
 import com.weizilla.garmin.fetcher.ActivitiesFetcher;
+import com.weizilla.garmin.fetcher.HttpClientFactory;
 import com.weizilla.garmin.parser.ActivitiesParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,8 @@ public class ActivityDownloader
 
     private static void printActivities(String username, String password) throws Exception
     {
-        ActivitiesFetcher fetcher = new ActivitiesFetcher(username, password);
+        HttpClientFactory factory = new HttpClientFactory();
+        ActivitiesFetcher fetcher = new ActivitiesFetcher(factory, username, password);
         ActivitiesParser parser = new ActivitiesParser();
 
         String json = fetcher.fetch();
