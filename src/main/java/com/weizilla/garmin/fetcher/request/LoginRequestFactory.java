@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -30,7 +30,7 @@ public class LoginRequestFactory extends RequestFactory
     }
 
     @Override
-    public HttpRequestBase create(String prevResult) throws IOException
+    public HttpUriRequest create(String prevResult) throws IOException
     {
         List<NameValuePair> data = new ArrayList<>();
         data.addAll(PARAMS);

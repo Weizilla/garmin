@@ -1,7 +1,8 @@
 package com.weizilla.garmin.fetcher.request;
 
+import com.weizilla.garmin.GarminException;
 import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
 public class HeadTicketRequestFactory extends RequestFactory
 {
     @Override
-    public HttpRequestBase create(String prevResult) throws IOException
+    public HttpUriRequest create(String prevResult) throws IOException
     {
         Pattern ticketPattern = Pattern.compile("ticket=(.*)'");
         Matcher matcher = ticketPattern.matcher(prevResult);
@@ -26,7 +27,7 @@ public class HeadTicketRequestFactory extends RequestFactory
             String fullTicketUrl = "https://connect.garmin.com/post-auth/login" + ticketUrl;
             return new HttpHead(fullTicketUrl);
         }
-        throw new IOException("Ticket not found in resulting html");
+        throw new GarminException("Ticket not found in resulting html");
     }
 
     @Override
