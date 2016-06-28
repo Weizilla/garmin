@@ -2,6 +2,8 @@
 
 Library to download data from Garmin Connect
 
+[![Build Status](https://travis-ci.org/Weizilla/garmin.svg?branch=master)](https://travis-ci.org/Weizilla/garmin)
+
 ## Command Line Sample Instructions
 1. Install Java 8 + Maven
 2. Run script with arguments: `./build-and-run USERNAME PASSWORD`
