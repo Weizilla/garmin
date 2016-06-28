@@ -1,16 +1,21 @@
 package com.weizilla.garmin.entity;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
+
 import java.time.Duration;
 import java.time.Instant;
 
 public class Activity
 {
+    @Id
     private final long id;
     private final String type;
     private final Duration duration;
     private final Instant start;
     private final double distance;
 
+    @PersistenceConstructor
     public Activity(long id, String type, Duration duration, Instant start, double distance)
     {
         this.id = id;

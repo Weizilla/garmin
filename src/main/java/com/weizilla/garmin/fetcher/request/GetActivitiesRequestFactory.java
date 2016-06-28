@@ -2,7 +2,11 @@ package com.weizilla.garmin.fetcher.request;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
+@Component
+@Order(4)
 public class GetActivitiesRequestFactory extends RequestFactory
 {
     protected static final String GET_ACTIVITIES_URL =

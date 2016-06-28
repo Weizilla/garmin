@@ -8,12 +8,18 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
+@Order(2)
 public class LoginRequestFactory extends RequestFactory
 {
     private static final BasicNameValuePair EVENT_ID = new BasicNameValuePair("_eventId", "submit");
@@ -23,7 +29,8 @@ public class LoginRequestFactory extends RequestFactory
     private final String username;
     private final String password;
 
-    public LoginRequestFactory(String username, String password)
+    @Autowired
+    public LoginRequestFactory(@Value("${garminUsername}") String username, @Value("${garminPassword}") String password)
     {
         this.username = username;
         this.password = password;

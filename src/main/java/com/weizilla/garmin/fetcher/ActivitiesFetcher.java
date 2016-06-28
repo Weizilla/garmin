@@ -7,9 +7,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class ActivitiesFetcher
 {
     private static final Logger logger = LoggerFactory.getLogger(ActivitiesFetcher.class);
@@ -18,17 +21,18 @@ public class ActivitiesFetcher
     private final List<RequestFactory> requestFactories;
     private final int rateLimit;
 
-    public ActivitiesFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories,
+    @Autowired
+    public ActivitiesFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories)
+    {
+        this(clientFactory, requestFactories, DEFAULT_RATE_LIMIT_MS);
+    }
+
+    ActivitiesFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories,
         int rateLimit)
     {
         this.clientFactory = clientFactory;
         this.requestFactories = requestFactories;
         this.rateLimit = rateLimit;
-    }
-
-    public ActivitiesFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories)
-    {
-        this(clientFactory, requestFactories, DEFAULT_RATE_LIMIT_MS);
     }
 
     public String fetch() throws Exception
@@ -47,6 +51,7 @@ public class ActivitiesFetcher
     private String execute(RequestFactory factory, String lastResult, CloseableHttpClient httpClient)
         throws Exception
     {
+        logger.info("Executing request factory: {}", factory.getClass().getSimpleName());
         HttpUriRequest request = factory.create(lastResult);
         Thread.sleep(rateLimit);
         try (CloseableHttpResponse response = httpClient.execute(request))
