@@ -5,6 +5,7 @@ import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Objects;
 
 public class Activity
 {
@@ -60,5 +61,30 @@ public class Activity
             ", start=" + start +
             ", distance=" + distance +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        Activity activity = (Activity) o;
+        return id == activity.id &&
+            Double.compare(activity.distance, distance) == 0 &&
+            Objects.equals(type, activity.type) &&
+            Objects.equals(duration, activity.duration) &&
+            Objects.equals(start, activity.start);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(id, type, duration, start, distance);
     }
 }
