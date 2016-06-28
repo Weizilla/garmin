@@ -13,21 +13,21 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class ActivitiesFetcher
+public class ActivityFetcher
 {
-    private static final Logger logger = LoggerFactory.getLogger(ActivitiesFetcher.class);
+    private static final Logger logger = LoggerFactory.getLogger(ActivityFetcher.class);
     protected static final int DEFAULT_RATE_LIMIT_MS = 1000;
     private final HttpClientFactory clientFactory;
     private final List<RequestFactory> requestFactories;
     private final int rateLimit;
 
     @Autowired
-    public ActivitiesFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories)
+    public ActivityFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories)
     {
         this(clientFactory, requestFactories, DEFAULT_RATE_LIMIT_MS);
     }
 
-    ActivitiesFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories,
+    ActivityFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories,
         int rateLimit)
     {
         this.clientFactory = clientFactory;

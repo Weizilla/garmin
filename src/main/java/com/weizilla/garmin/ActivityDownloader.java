@@ -1,7 +1,7 @@
 package com.weizilla.garmin;
 
 import com.weizilla.garmin.entity.Activity;
-import com.weizilla.garmin.fetcher.ActivitiesFetcher;
+import com.weizilla.garmin.fetcher.ActivityFetcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +10,14 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class ActivitiesDownloader
+public class ActivityDownloader
 {
-    private static final Logger logger = LoggerFactory.getLogger(ActivitiesDownloader.class);
-    private final ActivitiesParser parser;
-    private final ActivitiesFetcher fetcher;
+    private static final Logger logger = LoggerFactory.getLogger(ActivityDownloader.class);
+    private final ActivityParser parser;
+    private final ActivityFetcher fetcher;
 
     @Autowired
-    public ActivitiesDownloader(ActivitiesParser parser, ActivitiesFetcher fetcher)
+    public ActivityDownloader(ActivityParser parser, ActivityFetcher fetcher)
     {
         this.parser = parser;
         this.fetcher = fetcher;

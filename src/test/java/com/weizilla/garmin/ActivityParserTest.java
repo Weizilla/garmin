@@ -1,6 +1,5 @@
 package com.weizilla.garmin;
 
-import com.weizilla.garmin.ActivitiesParser;
 import com.weizilla.garmin.entity.Activity;
 import com.weizilla.test.TestUtils;
 import org.junit.Before;
@@ -13,18 +12,18 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 
-public class ActivitiesParserTest
+public class ActivityParserTest
 {
-    private ActivitiesParser parser;
+    private ActivityParser parser;
 
     @Before
     public void setUp() throws Exception
     {
-        parser = new ActivitiesParser();
+        parser = new ActivityParser();
     }
 
     @Test
-    public void parsesActivityFromJsonFile() throws Exception
+    public void parsesActivitiesFromJsonFile() throws Exception
     {
         String activitiesJson = TestUtils.readFile("activities.json");
         List<Activity> activities = parser.parse(activitiesJson);

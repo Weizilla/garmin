@@ -1,8 +1,5 @@
 package com.weizilla.garmin.fetcher;
 
-import com.weizilla.garmin.fetcher.ActivitiesFetcher;
-import com.weizilla.garmin.fetcher.HttpClientFactory;
-import com.weizilla.garmin.fetcher.RequestFactoryStub;
 import com.weizilla.garmin.fetcher.request.RequestFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -25,9 +22,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ActivitiesFetcherTest
+public class ActivityFetcherTest
 {
-    private ActivitiesFetcher fetcher;
+    private ActivityFetcher fetcher;
     private List<RequestFactory> factories;
 
     @Mock
@@ -40,14 +37,14 @@ public class ActivitiesFetcherTest
     public void setUp() throws Exception
     {
         factories = new ArrayList<>();
-        fetcher = new ActivitiesFetcher(new HttpClientFactoryStub(), factories, 0);
+        fetcher = new ActivityFetcher(new HttpClientFactoryStub(), factories, 0);
     }
 
     @Test
     public void createsWithDefaultLimit() throws Exception
     {
-        fetcher = new ActivitiesFetcher(new HttpClientFactoryStub(), factories);
-        assertThat(fetcher.getRateLimit()).isEqualTo(ActivitiesFetcher.DEFAULT_RATE_LIMIT_MS);
+        fetcher = new ActivityFetcher(new HttpClientFactoryStub(), factories);
+        assertThat(fetcher.getRateLimit()).isEqualTo(ActivityFetcher.DEFAULT_RATE_LIMIT_MS);
     }
 
     @Test

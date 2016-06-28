@@ -13,11 +13,11 @@ import java.util.List;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "com.weizilla.garmin")
-public class ActivitiesDownloaderCli implements CommandLineRunner
+public class ActivityDownloaderCli implements CommandLineRunner
 {
-    private static final Logger logger = LoggerFactory.getLogger(ActivitiesDownloaderCli.class);
+    private static final Logger logger = LoggerFactory.getLogger(ActivityDownloaderCli.class);
     @Autowired
-    private ActivitiesDownloader downloader;
+    private ActivityDownloader downloader;
 
     @Override
     public void run(String... strings) throws Exception
@@ -28,7 +28,7 @@ public class ActivitiesDownloaderCli implements CommandLineRunner
 
     public static void main(String[] args) throws Exception
     {
-        SpringApplication application = new SpringApplication(ActivitiesDownloaderCli.class);
+        SpringApplication application = new SpringApplication(ActivityDownloaderCli.class);
         application.setWebEnvironment(false);
         application.run(args);
     }

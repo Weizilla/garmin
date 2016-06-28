@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Component
-public class ActivitiesParser
+public class ActivityParser
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final double MILES_TO_KM = 1.60934;
@@ -43,7 +43,7 @@ public class ActivitiesParser
     {
         return toStream(activities)
             .map(n -> n.get("activity"))
-            .map(ActivitiesParser::parseActivity)
+            .map(ActivityParser::parseActivity)
             .collect(Collectors.toList());
     }
 

@@ -1,7 +1,7 @@
 package com.weizilla.garmin;
 
 import com.weizilla.garmin.entity.Activity;
-import com.weizilla.garmin.fetcher.ActivitiesFetcher;
+import com.weizilla.garmin.fetcher.ActivityFetcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,18 +19,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ActivitiesDownloaderTest
+public class ActivityDownloaderTest
 {
     @Mock
-    private ActivitiesFetcher fetcher;
+    private ActivityFetcher fetcher;
     @Mock
-    private ActivitiesParser parser;
-    private ActivitiesDownloader downloader;
+    private ActivityParser parser;
+    private ActivityDownloader downloader;
 
     @Before
     public void setUp() throws Exception
     {
-        downloader = new ActivitiesDownloader(parser, fetcher);
+        downloader = new ActivityDownloader(parser, fetcher);
     }
 
     @Test
