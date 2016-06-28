@@ -13,7 +13,7 @@ import java.util.List;
 public class ActivitiesFetcher
 {
     private static final Logger logger = LoggerFactory.getLogger(ActivitiesFetcher.class);
-    private static final int DEFAULT_RATE_LIMIT_MS = 1000;
+    protected static final int DEFAULT_RATE_LIMIT_MS = 1000;
     private final HttpClientFactory clientFactory;
     private final List<RequestFactory> requestFactories;
     private final int rateLimit;
@@ -53,5 +53,10 @@ public class ActivitiesFetcher
         {
             return factory.isExtractResult() ? EntityUtils.toString(response.getEntity()) : null;
         }
+    }
+
+    protected int getRateLimit()
+    {
+        return rateLimit;
     }
 }

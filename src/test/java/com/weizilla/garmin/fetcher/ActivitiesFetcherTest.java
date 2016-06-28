@@ -41,6 +41,13 @@ public class ActivitiesFetcherTest
     }
 
     @Test
+    public void createsWithDefaultLimit() throws Exception
+    {
+        fetcher = new ActivitiesFetcher(new HttpClientFactoryStub(), factories);
+        assertThat(fetcher.getRateLimit()).isEqualTo(ActivitiesFetcher.DEFAULT_RATE_LIMIT_MS);
+    }
+
+    @Test
     public void executesRequestByClient() throws Exception
     {
         factories.add(new RequestFactoryStub(request, false));
