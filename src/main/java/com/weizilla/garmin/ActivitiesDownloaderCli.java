@@ -1,8 +1,6 @@
-package com.weizilla.garmin.cli;
+package com.weizilla.garmin;
 
 import com.weizilla.garmin.entity.Activity;
-import com.weizilla.garmin.fetcher.ActivitiesFetcher;
-import com.weizilla.garmin.parser.ActivitiesParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,26 +13,22 @@ import java.util.List;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "com.weizilla.garmin")
-public class ActivityDownloader implements CommandLineRunner
+public class ActivitiesDownloaderCli implements CommandLineRunner
 {
-    private static final Logger logger = LoggerFactory.getLogger(ActivityDownloader.class);
+    private static final Logger logger = LoggerFactory.getLogger(ActivitiesDownloaderCli.class);
     @Autowired
-    private ActivitiesFetcher fetcher;
-    @Autowired
-    private ActivitiesParser parser;
+    private ActivitiesDownloader downloader;
 
     @Override
     public void run(String... strings) throws Exception
     {
-        String json = fetcher.fetch();
-        List<Activity> activities = parser.parse(json);
-        logger.info("Got {} activities", activities.size());
+        List<Activity> activities = downloader.download();
         activities.forEach(a -> logger.info(a.toString()));
     }
 
     public static void main(String[] args) throws Exception
     {
-        SpringApplication application = new SpringApplication(ActivityDownloader.class);
+        SpringApplication application = new SpringApplication(ActivitiesDownloaderCli.class);
         application.setWebEnvironment(false);
         application.run(args);
     }
