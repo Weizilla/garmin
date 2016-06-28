@@ -10,10 +10,10 @@ Library to download data from Garmin Connect
 
 ## To Do
 1. Create build and run script
-2. Integrate with Travis CI and Coveralls
-3. Clean up `ActivitesFetcher` and add unit tests
-4. Check for invalid return codes
-5. Cleaner rate limiter
+2. Integrate with Coveralls
+3. Check for invalid return codes
+4. Cleaner rate limiter
+5. Add Spring + configs
 
 ## Credits
 Based on the great work from Collin Fair's [tapiriik](https://github.com/cpfair/tapiriik/) project.
