@@ -11,10 +11,9 @@ Library to download data from Garmin Connect
 2. Run script with arguments: `./build-and-run USERNAME PASSWORD`
 
 ## To Do
-1. Create build and run script
-2. Check for invalid return codes
-3. Cleaner rate limiter
-4. Add Spring + configs
+1. Check for invalid return codes
+2. Cleaner rate limiter
+3. Add Spring + configs
 
 ## Credits
 Based on the great work from Collin Fair's [tapiriik](https://github.com/cpfair/tapiriik/) project.
