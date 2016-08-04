@@ -6,7 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Duration;
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +35,8 @@ public class ActivityParserTest
         assertThat(activity.getType()).isEqualTo("running");
         assertThat(activity.getDuration()).isEqualTo(Duration.ofSeconds(1527));
         assertThat(activity.getDistance()).isCloseTo(5, within(0.1));
-        assertThat(activity.getStart()).isEqualTo(Instant.parse("2016-08-03T11:22:25.000Z"));
+        LocalDateTime start = LocalDateTime.of(2016, Month.AUGUST, 3, 6, 22, 25);
+        assertThat(activity.getStart()).isEqualTo(start);
     }
 
     @Test

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -63,7 +65,9 @@ public class ActivityParser
         Duration duration = Duration.ofSeconds(seconds);
 
         String startStamp = jsonNode.at("/activitySummary/BeginTimestamp/value").asText();
-        Instant start = Instant.parse(startStamp);
+        Instant startInstant = Instant.parse(startStamp);
+        ZoneId startZoneId = ZoneId.of(jsonNode.at("/activitySummary/BeginTimestamp/uom").asText());
+        LocalDateTime start = LocalDateTime.ofInstant(startInstant, startZoneId);
 
         return new Activity(activityId, type, duration, start, distance);
     }

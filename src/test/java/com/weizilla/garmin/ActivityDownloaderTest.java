@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.Duration;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class ActivityDownloaderTest
     @Test
     public void returnsParsedActivities() throws Exception
     {
-        Activity activity = new Activity(1, "TYPE", Duration.ofDays(1), Instant.now(), 10.0);
+        Activity activity = new Activity(1, "TYPE", Duration.ofDays(1), LocalDateTime.now(), 10.0);
         List<Activity> activities = Collections.singletonList(activity);
         when(parser.parse(anyString())).thenReturn(activities);
 

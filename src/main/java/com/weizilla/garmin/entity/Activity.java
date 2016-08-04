@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.time.Duration;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Activity
@@ -13,11 +13,11 @@ public class Activity
     private final long id;
     private final String type;
     private final Duration duration;
-    private final Instant start;
+    private final LocalDateTime start;
     private final double distance;
 
     @PersistenceConstructor
-    public Activity(long id, String type, Duration duration, Instant start, double distance)
+    public Activity(long id, String type, Duration duration, LocalDateTime start, double distance)
     {
         this.id = id;
         this.type = type;
@@ -41,7 +41,7 @@ public class Activity
         return duration;
     }
 
-    public Instant getStart()
+    public LocalDateTime getStart()
     {
         return start;
     }
