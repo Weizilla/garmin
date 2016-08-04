@@ -14,6 +14,7 @@ Library to download data from Garmin Connect
 1. Check for invalid return codes
 2. Cleaner rate limiter
 3. Add Spring + configs
+4. Change start from Instant to LocalDateTime
 
 ## Credits
 Based on the great work from Collin Fair's [tapiriik](https://github.com/cpfair/tapiriik/) project.

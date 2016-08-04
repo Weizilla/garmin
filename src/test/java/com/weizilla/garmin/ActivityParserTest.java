@@ -30,11 +30,11 @@ public class ActivityParserTest
         assertThat(activities).hasSize(1);
 
         Activity activity = activities.get(0);
-        assertThat(activity.getId()).isEqualTo(1211725706);
+        assertThat(activity.getId()).isEqualTo(1286232939);
         assertThat(activity.getType()).isEqualTo("running");
-        assertThat(activity.getDuration()).isEqualTo(Duration.ofSeconds(4443));
-        assertThat(activity.getDistance()).isCloseTo(11.34588, within(0.1));
-        assertThat(activity.getStart()).isEqualTo(Instant.parse("2016-06-12T11:56:05.000Z"));
+        assertThat(activity.getDuration()).isEqualTo(Duration.ofSeconds(1527));
+        assertThat(activity.getDistance()).isCloseTo(5, within(0.1));
+        assertThat(activity.getStart()).isEqualTo(Instant.parse("2016-08-03T11:22:25.000Z"));
     }
 
     @Test

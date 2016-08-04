@@ -37,13 +37,13 @@ public class ActivityFetcherTest
     public void setUp() throws Exception
     {
         factories = new ArrayList<>();
-        fetcher = new ActivityFetcher(new HttpClientFactoryStub(), factories, 0);
+        fetcher = new ActivityFetcher(new HttpClientFactoryStub(), factories, 0, false);
     }
 
     @Test
     public void createsWithDefaultLimit() throws Exception
     {
-        fetcher = new ActivityFetcher(new HttpClientFactoryStub(), factories);
+        fetcher = new ActivityFetcher(new HttpClientFactoryStub(), factories, false);
         assertThat(fetcher.getRateLimit()).isEqualTo(ActivityFetcher.DEFAULT_RATE_LIMIT_MS);
     }
 

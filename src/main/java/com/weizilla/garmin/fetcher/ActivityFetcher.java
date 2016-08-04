@@ -8,6 +8,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,19 +21,22 @@ public class ActivityFetcher
     private final HttpClientFactory clientFactory;
     private final List<RequestFactory> requestFactories;
     private final int rateLimit;
+    private final boolean printResponse;
 
     @Autowired
-    public ActivityFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories)
+    public ActivityFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories,
+        @Value("${printResponse:false}") boolean printResponse)
     {
-        this(clientFactory, requestFactories, DEFAULT_RATE_LIMIT_MS);
+        this(clientFactory, requestFactories, DEFAULT_RATE_LIMIT_MS, printResponse);
     }
 
     ActivityFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories,
-        int rateLimit)
+        int rateLimit, boolean printResponse)
     {
         this.clientFactory = clientFactory;
         this.requestFactories = requestFactories;
         this.rateLimit = rateLimit;
+        this.printResponse = printResponse;
     }
 
     public String fetch() throws Exception
@@ -56,7 +60,12 @@ public class ActivityFetcher
         Thread.sleep(rateLimit);
         try (CloseableHttpResponse response = httpClient.execute(request))
         {
-            return factory.isExtractResult() ? EntityUtils.toString(response.getEntity()) : null;
+            String result = factory.isExtractResult() ? EntityUtils.toString(response.getEntity()) : null;
+            if (printResponse)
+            {
+                logger.info(result);
+            }
+            return result;
         }
     }
 
