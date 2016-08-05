@@ -26,7 +26,7 @@ public class Activity
         this.distance = distance;
     }
 
-    public long getId()
+    public Long getId()
     {
         return id;
     }
