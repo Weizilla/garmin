@@ -4,7 +4,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -27,7 +26,7 @@ public class Activity
         this.distance = distance;
     }
 
-    public Long getId()
+    public long getId()
     {
         return id;
     }
@@ -45,11 +44,6 @@ public class Activity
     public LocalDateTime getStart()
     {
         return start;
-    }
-
-    public LocalDate getStartDate()
-    {
-        return start.toLocalDate();
     }
 
     public double getDistance()
