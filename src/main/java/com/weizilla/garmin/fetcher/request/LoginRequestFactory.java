@@ -30,7 +30,9 @@ public class LoginRequestFactory extends RequestFactory
     private final String password;
 
     @Autowired
-    public LoginRequestFactory(@Value("${garminUsername}") String username, @Value("${garminPassword}") String password)
+    public LoginRequestFactory(
+        @Value("${garmin.username}") String username,
+        @Value("${garmin.password}") String password)
     {
         this.username = username;
         this.password = password;
