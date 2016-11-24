@@ -43,4 +43,10 @@ public class GetTicketRequestFactory extends RequestFactory
     {
         return false;
     }
+
+    @Override
+    public String getStepName()
+    {
+        return "Get Ticket";
+    }
 }

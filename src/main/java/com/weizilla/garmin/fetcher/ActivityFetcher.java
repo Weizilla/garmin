@@ -1,5 +1,6 @@
 package com.weizilla.garmin.fetcher;
 
+import com.weizilla.garmin.LogConfig;
 import com.weizilla.garmin.fetcher.request.RequestFactory;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -8,9 +9,9 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.List;
 
 @Component
@@ -21,22 +22,22 @@ public class ActivityFetcher
     private final HttpClientFactory clientFactory;
     private final List<RequestFactory> requestFactories;
     private final int rateLimit;
-    private final boolean printEntity;
+    private final LogConfig logConfig;
 
     @Autowired
     public ActivityFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories,
-        @Value("${print-response.entity:false}") boolean printEntity)
+        LogConfig logConfig)
     {
-        this(clientFactory, requestFactories, DEFAULT_RATE_LIMIT_MS, printEntity);
+        this(clientFactory, requestFactories, DEFAULT_RATE_LIMIT_MS, logConfig);
     }
 
     ActivityFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories,
-        int rateLimit, boolean printEntity)
+        int rateLimit, LogConfig logConfig)
     {
         this.clientFactory = clientFactory;
         this.requestFactories = requestFactories;
         this.rateLimit = rateLimit;
-        this.printEntity = printEntity;
+        this.logConfig = logConfig;
     }
 
     public String fetch() throws Exception
@@ -55,17 +56,31 @@ public class ActivityFetcher
     private String execute(RequestFactory factory, String lastResult, CloseableHttpClient httpClient)
         throws Exception
     {
-        logger.info("Executing request factory: {}", factory.getClass().getSimpleName());
         HttpUriRequest request = factory.create(lastResult);
+        logRequest(factory, request);
         Thread.sleep(rateLimit);
         try (CloseableHttpResponse response = httpClient.execute(request))
         {
             String result = factory.isExtractResult() ? EntityUtils.toString(response.getEntity()) : null;
-            if (printEntity)
-            {
-                logger.info(result);
-            }
+            logResult(factory, result);
             return result;
+        }
+    }
+
+    private void logRequest(RequestFactory factory, HttpUriRequest request) throws IOException
+    {
+        if (logConfig.isUrl())
+        {
+            logger.info("Executing step {}: {} {}",
+                factory.getStepName(), request.getMethod(), request.getURI());
+        }
+    }
+
+    private void logResult(RequestFactory factory, String result)
+    {
+        if (logConfig.isResult())
+        {
+            logger.info("Result for {}:\n{}", factory.getStepName(), result);
         }
     }
 

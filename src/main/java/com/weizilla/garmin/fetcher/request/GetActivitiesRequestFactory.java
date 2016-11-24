@@ -31,4 +31,10 @@ public class GetActivitiesRequestFactory extends RequestFactory
     {
         return true;
     }
+
+    @Override
+    public String getStepName()
+    {
+        return "Get Activities";
+    }
 }

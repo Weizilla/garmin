@@ -27,4 +27,10 @@ public class RequestFactoryStub extends RequestFactory
     {
         return extractResponse;
     }
+
+    @Override
+    public String getStepName()
+    {
+        return null;
+    }
 }

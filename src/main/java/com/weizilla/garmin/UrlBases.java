@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "url-base")
+@ConfigurationProperties(prefix = "garmin.url-base")
 public class UrlBases
 {
     /**

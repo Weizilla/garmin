@@ -1,8 +1,10 @@
-print-response:
-  entity: false
+garmin:
+  log:
+    result: false
+    url: false
 
-url-base:
-  get-activities: https://connect.garmin.com
-  get-ticket: https://connect.garmin.com
-  login: https://sso.garmin.com
-  lt-lookup: https://sso.garmin.com
+  url-base:
+    get-activities: https://connect.garmin.com
+    get-ticket: https://connect.garmin.com
+    login: https://sso.garmin.com
+    lt-lookup: https://sso.garmin.com

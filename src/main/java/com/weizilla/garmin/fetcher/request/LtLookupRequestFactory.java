@@ -32,4 +32,10 @@ public class LtLookupRequestFactory extends RequestFactory
     {
         return true;
     }
+
+    @Override
+    public String getStepName()
+    {
+        return "LT Lookup";
+    }
 }

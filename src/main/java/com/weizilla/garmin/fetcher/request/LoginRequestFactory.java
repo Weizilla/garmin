@@ -66,4 +66,10 @@ public class LoginRequestFactory extends RequestFactory
     {
         return true;
     }
+
+    @Override
+    public String getStepName()
+    {
+        return "Login";
+    }
 }

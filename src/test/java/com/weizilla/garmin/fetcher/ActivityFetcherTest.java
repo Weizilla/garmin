@@ -1,5 +1,6 @@
 package com.weizilla.garmin.fetcher;
 
+import com.weizilla.garmin.LogConfig;
 import com.weizilla.garmin.fetcher.request.RequestFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -37,13 +38,13 @@ public class ActivityFetcherTest
     public void setUp() throws Exception
     {
         factories = new ArrayList<>();
-        fetcher = new ActivityFetcher(new HttpClientFactoryStub(), factories, 0, false);
+        fetcher = new ActivityFetcher(new HttpClientFactoryStub(), factories, 0, new LogConfig());
     }
 
     @Test
     public void createsWithDefaultLimit() throws Exception
     {
-        fetcher = new ActivityFetcher(new HttpClientFactoryStub(), factories, false);
+        fetcher = new ActivityFetcher(new HttpClientFactoryStub(), factories, new LogConfig());
         assertThat(fetcher.getRateLimit()).isEqualTo(ActivityFetcher.DEFAULT_RATE_LIMIT_MS);
     }
 

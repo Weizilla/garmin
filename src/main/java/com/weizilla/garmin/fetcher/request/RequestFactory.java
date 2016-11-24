@@ -28,6 +28,8 @@ public abstract class RequestFactory
 
     public abstract boolean isExtractResult();
 
+    public abstract String getStepName();
+
     protected static String encode(String key, String value)
     {
         return encode(Collections.singletonList(new BasicNameValuePair(key, value)));
