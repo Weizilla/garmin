@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class GetActivitiesRequestFactory extends RequestFactory
 {
     protected static final String GET_ACTIVITIES_URL =
-        "https://connect.garmin.com/proxy/activity-search-service-1.2/json/activities?";
+        "https://connect.garmin.com/proxy/activity-search-service-1.2/json/activities";
 
     @Override
     public HttpUriRequest create(String prevResult)

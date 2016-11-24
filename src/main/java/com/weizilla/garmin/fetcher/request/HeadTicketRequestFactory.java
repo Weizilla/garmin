@@ -1,7 +1,7 @@
 package com.weizilla.garmin.fetcher.request;
 
 import com.weizilla.garmin.GarminException;
-import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
@@ -29,7 +29,7 @@ public class HeadTicketRequestFactory extends RequestFactory
             BasicNameValuePair ticketPair = new BasicNameValuePair("ticket", ticket);
             String ticketUrl = "?" + URLEncodedUtils.format(Collections.singleton(ticketPair), StandardCharsets.UTF_8);
             String fullTicketUrl = "https://connect.garmin.com/post-auth/login" + ticketUrl;
-            return new HttpHead(fullTicketUrl);
+            return new HttpGet(fullTicketUrl);
         }
         throw new GarminException("Ticket not found in resulting html");
     }
