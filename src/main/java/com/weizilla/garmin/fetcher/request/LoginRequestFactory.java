@@ -1,6 +1,7 @@
 package com.weizilla.garmin.fetcher.request;
 
 import com.google.common.collect.Lists;
+import com.weizilla.garmin.UrlBases;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -26,14 +27,16 @@ public class LoginRequestFactory extends RequestFactory
     private static final BasicNameValuePair EMBED = new BasicNameValuePair("embed", "true");
     private static final BasicNameValuePair DISPLAY_NAME = new BasicNameValuePair("displayNameRequired", "false");
     private static final List<BasicNameValuePair> PARAMS = Lists.newArrayList(EVENT_ID, EMBED, DISPLAY_NAME);
+    private final UrlBases urlBases;
     private final String username;
     private final String password;
 
     @Autowired
-    public LoginRequestFactory(
+    public LoginRequestFactory( UrlBases urlBases,
         @Value("${garmin.username}") String username,
         @Value("${garmin.password}") String password)
     {
+        this.urlBases = urlBases;
         this.username = username;
         this.password = password;
     }
@@ -47,7 +50,7 @@ public class LoginRequestFactory extends RequestFactory
         data.add(new BasicNameValuePair("password", password));
         data.add(new BasicNameValuePair("lt", parseLt(prevResult)));
 
-        HttpPost request = new HttpPost("https://sso.garmin.com/sso/login" + PARAMS_URL);
+        HttpPost request = new HttpPost(urlBases.getLogin() + SSO_URL);
         request.setEntity(new UrlEncodedFormEntity(data, StandardCharsets.UTF_8));
         return request;
     }

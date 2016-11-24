@@ -1,5 +1,6 @@
 package com.weizilla.garmin.fetcher.request;
 
+import com.weizilla.garmin.UrlBases;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,14 +14,14 @@ public class LtLookupRequestFactoryTest
     @Before
     public void setUp() throws Exception
     {
-        factory = new LtLookupRequestFactory();
+        factory = new LtLookupRequestFactory(new UrlBases());
     }
 
     @Test
     public void returnsHttpRequest() throws Exception
     {
         HttpUriRequest request = factory.create(null);
-        assertThat(request.getURI().toString()).contains(LtLookupRequestFactory.LOGIN_URL);
+        assertThat(request.getURI().toString()).contains(RequestFactory.SSO_URL);
     }
 
     @Test

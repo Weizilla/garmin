@@ -8,11 +8,12 @@ import org.apache.http.message.BasicNameValuePair;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class RequestFactory
 {
-    protected static final String PARAMS_URL;
+    protected static final String SSO_URL;
 
     static
     {
@@ -20,10 +21,20 @@ public abstract class RequestFactory
         params.add(new BasicNameValuePair("service", "https://connect.garmin.com/post-auth/login"));
         params.add(new BasicNameValuePair("clientId", "GarminConnect"));
         params.add(new BasicNameValuePair("consumeServiceTicket", "false"));
-        PARAMS_URL = "?" + URLEncodedUtils.format(params, StandardCharsets.UTF_8);
+        SSO_URL = "/sso/login?" + encode(params);
     }
 
     public abstract HttpUriRequest create(String prevResult) throws IOException;
 
     public abstract boolean isExtractResult();
+
+    protected static String encode(String key, String value)
+    {
+        return encode(Collections.singletonList(new BasicNameValuePair(key, value)));
+    }
+
+    protected static String encode(List<NameValuePair> params)
+    {
+        return URLEncodedUtils.format(params, StandardCharsets.UTF_8);
+    }
 }

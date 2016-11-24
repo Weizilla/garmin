@@ -1,20 +1,21 @@
 package com.weizilla.garmin.fetcher.request;
 
 import com.weizilla.garmin.GarminException;
+import com.weizilla.garmin.UrlBases;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HeadTicketRequestFactoryTest
+public class GetTicketRequestFactoryTest
 {
-    private HeadTicketRequestFactory factory;
+    private GetTicketRequestFactory factory;
 
     @Before
     public void setUp() throws Exception
     {
-        factory = new HeadTicketRequestFactory();
+        factory = new GetTicketRequestFactory(new UrlBases());
     }
 
     @Test

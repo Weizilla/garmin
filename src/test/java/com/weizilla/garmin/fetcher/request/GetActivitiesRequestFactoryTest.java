@@ -1,5 +1,6 @@
 package com.weizilla.garmin.fetcher.request;
 
+import com.weizilla.garmin.UrlBases;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +14,7 @@ public class GetActivitiesRequestFactoryTest
     @Before
     public void setUp() throws Exception
     {
-        factory = new GetActivitiesRequestFactory();
+        factory = new GetActivitiesRequestFactory(new UrlBases());
     }
 
     @Test
