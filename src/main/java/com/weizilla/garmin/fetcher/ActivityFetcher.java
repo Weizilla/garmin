@@ -21,22 +21,22 @@ public class ActivityFetcher
     private final HttpClientFactory clientFactory;
     private final List<RequestFactory> requestFactories;
     private final int rateLimit;
-    private final boolean printResponse;
+    private final boolean printEntity;
 
     @Autowired
     public ActivityFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories,
-        @Value("${printResponse:false}") boolean printResponse)
+        @Value("${print-response.entity:false}") boolean printEntity)
     {
-        this(clientFactory, requestFactories, DEFAULT_RATE_LIMIT_MS, printResponse);
+        this(clientFactory, requestFactories, DEFAULT_RATE_LIMIT_MS, printEntity);
     }
 
     ActivityFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories,
-        int rateLimit, boolean printResponse)
+        int rateLimit, boolean printEntity)
     {
         this.clientFactory = clientFactory;
         this.requestFactories = requestFactories;
         this.rateLimit = rateLimit;
-        this.printResponse = printResponse;
+        this.printEntity = printEntity;
     }
 
     public String fetch() throws Exception
@@ -61,7 +61,7 @@ public class ActivityFetcher
         try (CloseableHttpResponse response = httpClient.execute(request))
         {
             String result = factory.isExtractResult() ? EntityUtils.toString(response.getEntity()) : null;
-            if (printResponse)
+            if (printEntity)
             {
                 logger.info(result);
             }
