@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link href="/sso/css/GAuth.css?20151102" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" src="/sso/js/jquery/1.6.4/jquery.min.js"></script>
+    <script type="text/javascript">jQuery.noConflict();</script>
+    <script type="text/javascript" src="/sso/js/json2.js"></script>
+    <script type="text/javascript" src="/sso/js/consoleUtils.js?20120711"></script>
+    <script type="text/javascript" src="/sso/js/postmessage.js?20120711"></script>
+	<script type="text/javascript">
+        var redirectAfterAccountLoginUrl = '';
+        var consumeServiceTicket         = 'false';
+        var service_url                  = 'https:\/\/connect.garmin.com\/post-auth\/login';
+        var parent_url                   = 'null';
+        var response_url                 = 'https:\/\/connect.garmin.com\/post-auth\/login?ticket=ST-292420-DXlglHKnd7bqvfUwetJo-cas';
+        var logintoken                   = '';
+        var social_uid                   = '';
+        if (response_url.indexOf('%3A%2F%2F') != -1) {
+            response_url = decodeURIComponent(response_url);
+        }
+        var service_ticket = response_url.substring(response_url.indexOf('ticket=') + 7, response_url.length);
+        if (redirectAfterAccountLoginUrl) {
+            consoleInfo('casGenericRedirect.jsp: redirectAfterAccountLoginUrl: [' + redirectAfterAccountLoginUrl + ']');
+        }
+        consoleInfo('casGenericRedirect.jsp: consumeServiceTicket:         [' + consumeServiceTicket + ']');
+        consoleInfo('casGenericRedirect.jsp: service_url:                  [' + service_url + ']');
+        consoleInfo('casGenericRedirect.jsp: parent_url:                   [' + parent_url + ']');
+        consoleInfo('casGenericRedirect.jsp: response_url:                 [' + response_url + ']');
+        consoleInfo('casGenericRedirect.jsp: service_ticket:               [' + service_ticket + ']');
+        if (logintoken) {
+            consoleInfo('casGenericRedirect.jsp: logintoken:                   [' + logintoken + ']');
+        }
+        if (social_uid) {
+            consoleInfo('casGenericRedirect.jsp: social_uid:                   [' + social_uid + ']');
+        }
+        function send(msg) {
+            consoleInfo('casGenericRedirect.jsp: send(): Calling XD.postMessage(msg:[' + JSON.stringify(msg) + '], target_url:[' + parent_url + '])...');
+            XD.postMessage(msg, parent_url, parent);
+            return false;
+        }
+function redirect(target){
+    if (logintoken || social_uid) {
+        send({'closeLiteBox':'1'});
+    } else {
+        send({'gauthHeight':jQuery("#GAuth-component").height()});
+    }
+    if (window.opener != null) {
+        var iframeParent = window.opener.parent;
+        iframeParent.location.href = target;
+        window.close();
+    } else {
+        if (redirectAfterAccountLoginUrl) {
+            send({'status':'SUCCESS', 'successDetails':'Login Successful'});
+            consoleInfo('casGenericRedirect.jsp: Calling parent.location.href = [' + response_url + '];...');
+            parent.location.href = response_url;
+        } else if (consumeServiceTicket == 'false') {
+            send({'status':'SUCCESS', 'successDetails':'Login Successful', 'serviceTicket':service_ticket, 'serviceUrl':service_url});
+        } else {
+            consoleInfo('casGenericRedirect.jsp: Loading ajax jsonp URL: [' + response_url + ']');
+            jQuery.ajax({
+                url: response_url,
+                dataType: 'jsonp',
+                error: function(xhr, status, error) {
+                    consoleError('casGenericRedirect.jsp: Error loading ajax jsonp URL: [' + response_url + ']! Error: ' + error);
+                },
+                success: function( data, status, xhr ) {
+                    consoleInfo('casGenericRedirect.jsp: success loading ajax jsonp url. data: [' + data + ']');
+                    var userdata = data;
+                    if (typeof(userdata) === 'string') {
+                        userdata = JSON.parse(data);
+                    }
+                    consoleInfo('casGenericRedirect.jsp: customerId: ['             + userdata.customerId
+                            + '], username: ['               + userdata.username
+                            + '], rememberMe: ['             + userdata.rememberMe
+                            + '], password: ['               + userdata.password
+                            + '], email: ['                  + userdata.email
+                            + '], displayName: ['            + userdata.displayName
+                            + '], firstName: ['              + userdata.firstName
+                            + '], lastName: ['               + userdata.lastName
+                            + '], localePreference: ['       + userdata.localePreference
+                            + '], addressLine1: ['           + userdata.addressLine1
+                            + '], addressLine2: ['           + userdata.addressLine2
+                            + '], cityName: ['               + userdata.cityName
+                            + '], state: ['                  + userdata.state
+                            + '], postalCode: ['             + userdata.postalCode
+                            + '], country: ['                + userdata.country
+                            + '], passwordChangeRequired: [' + userdata.passwordChangeRequired
+                            + '], lastLogin: ['              + userdata.lastLogin
+                            + '], erpCustomerNumber: ['      + userdata.erpCustomerNumber
+                            + ']');
+                    send({'status'                 : 'SUCCESS',
+                        'successDetails'         : 'Login Successful',
+                        'customerId'             : userdata.customerId,
+                        'username'               : userdata.username,
+                        'rememberMe'             : userdata.rememberMe,
+                        'password'               : userdata.password,
+                        'email'                  : userdata.email,
+                        'displayName'            : userdata.displayName,
+                        'firstName'              : userdata.firstName,
+                        'lastName'               : userdata.lastName,
+                        'localePreference'       : userdata.localePreference,
+                        'addressLine1'           : userdata.addressLine1,
+                        'addressLine2'           : userdata.addressLine2,
+                        'cityName'               : userdata.cityName,
+                        'state'                  : userdata.state,
+                        'postalCode'             : userdata.postalCode,
+                        'country'                : userdata.country,
+                        'passwordChangeRequired' : userdata.passwordChangeRequired,
+                        'lastLogin'              : userdata.lastLogin,
+                        'erpCustomerNumber'      : userdata.erpCustomerNumber
+                    });
+                }
+            });
+        }
+    }
+}
+    </script>
+</head>
+<body>
+    <div id="GAuth-component">
+        <img src='https://static.garmincdn.com/shared/global/media/images/ajax-loader.gif' class="loaderImage"/>
+    </div>
+    <script type="text/javascript">
+jQuery(document).ready(function(){
+    consoleInfo("casGenericRedirect.jsp: ready, calling redirect('https:\/\/connect.garmin.com\/post-auth\/login')...");
+    redirect('https:\/\/connect.garmin.com\/post-auth\/login');
+});
+    </script>
+</body>
+</html>
