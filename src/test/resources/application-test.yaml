@@ -1,3 +1,6 @@
+spring:
+    main:
+        banner-mode: "off"
 garmin:
   username: a
   password: b
