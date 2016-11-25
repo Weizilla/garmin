@@ -1,5 +1,6 @@
-package com.weizilla.garmin;
+package com.weizilla.garmin.downloader;
 
+import com.weizilla.garmin.downloader.ActivityParser;
 import com.weizilla.garmin.entity.Activity;
 import com.weizilla.test.TestUtils;
 import org.junit.Before;

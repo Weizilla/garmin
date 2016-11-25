@@ -1,7 +1,7 @@
 package com.weizilla.garmin.fetcher.request;
 
 import com.google.common.collect.Lists;
-import com.weizilla.garmin.UrlBases;
+import com.weizilla.garmin.fetcher.UrlBases;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;

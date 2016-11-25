@@ -1,6 +1,5 @@
 package com.weizilla.garmin.fetcher;
 
-import com.weizilla.garmin.LogConfig;
 import com.weizilla.garmin.fetcher.request.RequestFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;

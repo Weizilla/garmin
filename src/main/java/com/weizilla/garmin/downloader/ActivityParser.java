@@ -1,4 +1,4 @@
-package com.weizilla.garmin;
+package com.weizilla.garmin.downloader;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;

@@ -1,6 +1,6 @@
 package com.weizilla.garmin.fetcher.request;
 
-import com.weizilla.garmin.UrlBases;
+import com.weizilla.garmin.fetcher.UrlBases;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.weizilla.garmin;
+package com.weizilla.garmin.fetcher;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
