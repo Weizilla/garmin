@@ -2,6 +2,7 @@ package com.weizilla.garmin.fetcher.request;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
+import com.weizilla.garmin.fetcher.Credentials;
 import com.weizilla.garmin.fetcher.UrlBases;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -22,7 +23,10 @@ public class LoginRequestFactoryTest
     @Before
     public void setUp() throws Exception
     {
-        factory = new LoginRequestFactory(new UrlBases(), USERNAME, PASSWORD);
+        Credentials credentials = new Credentials();
+        credentials.setUsername(USERNAME);
+        credentials.setPassword(PASSWORD);
+        factory = new LoginRequestFactory(new UrlBases(), credentials);
     }
 
     @Test

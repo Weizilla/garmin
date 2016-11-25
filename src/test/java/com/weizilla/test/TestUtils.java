@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestUtils
 {
-    public static String readFile(String filename) throws Exception
+    public static String readResource(String filename) throws Exception
     {
         URL url = Resources.getResource(filename);
         String contents = Resources.toString(url, Charsets.UTF_8);

@@ -1,6 +1,7 @@
 package com.weizilla.garmin.fetcher.request;
 
 import com.google.common.collect.Lists;
+import com.weizilla.garmin.fetcher.Credentials;
 import com.weizilla.garmin.fetcher.UrlBases;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -10,7 +11,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -28,17 +28,13 @@ public class LoginRequestFactory extends RequestFactory
     private static final BasicNameValuePair DISPLAY_NAME = new BasicNameValuePair("displayNameRequired", "false");
     private static final List<BasicNameValuePair> PARAMS = Lists.newArrayList(EVENT_ID, EMBED, DISPLAY_NAME);
     private final UrlBases urlBases;
-    private final String username;
-    private final String password;
+    private final Credentials credentials;
 
     @Autowired
-    public LoginRequestFactory( UrlBases urlBases,
-        @Value("${garmin.username}") String username,
-        @Value("${garmin.password}") String password)
+    public LoginRequestFactory( UrlBases urlBases, Credentials credentials)
     {
         this.urlBases = urlBases;
-        this.username = username;
-        this.password = password;
+        this.credentials = credentials;
     }
 
     @Override
@@ -46,8 +42,8 @@ public class LoginRequestFactory extends RequestFactory
     {
         List<NameValuePair> data = new ArrayList<>();
         data.addAll(PARAMS);
-        data.add(new BasicNameValuePair("username", username));
-        data.add(new BasicNameValuePair("password", password));
+        data.add(new BasicNameValuePair("username", credentials.getUsername()));
+        data.add(new BasicNameValuePair("password", credentials.getPassword()));
         data.add(new BasicNameValuePair("lt", parseLt(prevResult)));
 
         HttpPost request = new HttpPost(urlBases.getLogin() + SSO_URL);
