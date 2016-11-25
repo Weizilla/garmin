@@ -31,6 +31,6 @@ public class RequestFactoryStub extends RequestFactory
     @Override
     public String getStepName()
     {
-        return null;
+        return "Test Stub";
     }
 }

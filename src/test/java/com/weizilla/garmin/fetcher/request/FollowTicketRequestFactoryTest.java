@@ -8,14 +8,14 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GetTicketRequestFactoryTest
+public class FollowTicketRequestFactoryTest
 {
-    private GetTicketRequestFactory factory;
+    private FollowTicketRequestFactory factory;
 
     @Before
     public void setUp() throws Exception
     {
-        factory = new GetTicketRequestFactory(new UrlBases());
+        factory = new FollowTicketRequestFactory(new UrlBases());
     }
 
     @Test

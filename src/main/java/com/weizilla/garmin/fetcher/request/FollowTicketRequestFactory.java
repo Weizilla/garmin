@@ -14,13 +14,13 @@ import java.util.regex.Pattern;
 
 @Component
 @Order(3)
-public class GetTicketRequestFactory extends RequestFactory
+public class FollowTicketRequestFactory extends RequestFactory
 {
     private static final String POST_AUTH_URL = "/post-auth/login?";
     private final UrlBases urlBases;
 
     @Autowired
-    public GetTicketRequestFactory(UrlBases urlBases)
+    public FollowTicketRequestFactory(UrlBases urlBases)
     {
         this.urlBases = urlBases;
     }
@@ -33,7 +33,7 @@ public class GetTicketRequestFactory extends RequestFactory
         if (matcher.find())
         {
             String ticket = matcher.group(1);
-            return new HttpGet(urlBases.getGetTicket() + POST_AUTH_URL + encode("ticket", ticket));
+            return new HttpGet(urlBases.getFollowTicket() + POST_AUTH_URL + encode("ticket", ticket));
         }
         throw new GarminException("Ticket not found in resulting html");
     }
@@ -47,6 +47,6 @@ public class GetTicketRequestFactory extends RequestFactory
     @Override
     public String getStepName()
     {
-        return "Get Ticket";
+        return "Follow Ticket";
     }
 }

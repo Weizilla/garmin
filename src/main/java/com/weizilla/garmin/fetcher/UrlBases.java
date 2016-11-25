@@ -12,9 +12,9 @@ public class UrlBases
      */
     private String getActivities;
     /**
-     * The base url for getting the ticket
+     * The base url for following ticket redirects
      */
-    private String getTicket;
+    private String followTicket;
     /**
      * The base url for logging in with SSO
      */
@@ -34,14 +34,14 @@ public class UrlBases
         this.getActivities = getActivities;
     }
 
-    public String getGetTicket()
+    public String getFollowTicket()
     {
-        return getTicket;
+        return followTicket;
     }
 
-    public void setGetTicket(String getTicket)
+    public void setFollowTicket(String followTicket)
     {
-        this.getTicket = getTicket;
+        this.followTicket = followTicket;
     }
 
     public String getLogin()

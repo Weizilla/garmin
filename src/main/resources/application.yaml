@@ -5,6 +5,6 @@ garmin:
 
   url-base:
     get-activities: https://connect.garmin.com
-    get-ticket: https://connect.garmin.com
+    follow-ticket: https://connect.garmin.com
     login: https://sso.garmin.com
     lt-lookup: https://sso.garmin.com

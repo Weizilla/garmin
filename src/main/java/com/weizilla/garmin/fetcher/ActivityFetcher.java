@@ -68,11 +68,8 @@ public class ActivityFetcher
 
     private void logRequest(RequestFactory factory, HttpUriRequest request) throws IOException
     {
-        if (logConfig.isUrl())
-        {
-            logger.info("Executing step {}: {} {}",
-                factory.getStepName(), request.getMethod(), request.getURI());
-        }
+        String url = logConfig.isUrl() ? request.getMethod() + " " + request.getURI() : "";
+        logger.info("Executing step [{}] {}", factory.getStepName(), url);
     }
 
     private void logResult(RequestFactory factory, String result)
