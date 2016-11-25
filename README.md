@@ -6,6 +6,8 @@ Library to download data from Garmin Connect
 
 [![Coverage Status](https://coveralls.io/repos/github/Weizilla/garmin/badge.svg?branch=master)](https://coveralls.io/github/Weizilla/garmin?branch=master)
 
+[![Release](https://jitpack.io/v/Weizilla/garmin.svg)](https://jitpack.io/#Weizilla/garmin)
+
 ## Command Line Sample Instructions
 1. Install Java 8 + Maven
 2. Run script with arguments: `./build-and-run USERNAME PASSWORD`
