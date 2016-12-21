@@ -21,6 +21,7 @@ public abstract class RequestFactory
         params.add(new BasicNameValuePair("service", "https://connect.garmin.com/post-auth/login"));
         params.add(new BasicNameValuePair("clientId", "GarminConnect"));
         params.add(new BasicNameValuePair("consumeServiceTicket", "false"));
+        params.add(new BasicNameValuePair("gauthHost", "https://sso.garmin.com/sso"));
         SSO_URL = "/sso/login?" + encode(params);
     }
 
