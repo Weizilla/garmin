@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -16,7 +18,7 @@ public class Activity
     private final String type;
     private final Duration duration;
     private final LocalDateTime start;
-    private final double distance;
+    private final Quantity<Length> distance;
 
     @PersistenceConstructor
     @JsonCreator
@@ -24,7 +26,7 @@ public class Activity
         @JsonProperty("type") String type,
         @JsonProperty("duration") Duration duration,
         @JsonProperty("start") LocalDateTime start,
-        @JsonProperty("distance") double distance)
+        @JsonProperty("distance") Quantity<Length> distance)
     {
         this.id = id;
         this.type = type;
@@ -53,7 +55,7 @@ public class Activity
         return start;
     }
 
-    public double getDistance()
+    public Quantity<Length> getDistance()
     {
         return distance;
     }
@@ -83,7 +85,7 @@ public class Activity
         }
         Activity activity = (Activity) o;
         return id == activity.id &&
-            Double.compare(activity.distance, distance) == 0 &&
+            Objects.equals(activity.distance, distance) &&
             Objects.equals(type, activity.type) &&
             Objects.equals(duration, activity.duration) &&
             Objects.equals(start, activity.start);

@@ -5,12 +5,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weizilla.garmin.entity.Activity;
 import org.springframework.stereotype.Component;
+import tec.uom.se.quantity.Quantities;
 
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -59,7 +62,9 @@ public class ActivityParser
     {
         long activityId = jsonNode.at("/activityId").asLong();
         String type = jsonNode.at("/activityType/key").asText();
-        double distance = jsonNode.at("/activitySummary/SumDistance/value").asDouble() * MILES_TO_KM;
+        
+        String distanceStr = jsonNode.at("/activitySummary/SumDistance/withUnitAbbr").asText();
+        Quantity<Length> distance = Quantities.getQuantity(distanceStr).asType(Length.class);
 
         int seconds = jsonNode.at("/activitySummary/SumDuration/value").asInt();
         Duration duration = Duration.ofSeconds(seconds);

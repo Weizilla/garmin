@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import systems.uom.common.USCustomary;
+import tec.uom.se.quantity.Quantities;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -45,7 +47,8 @@ public class ActivityDownloaderTest
     @Test
     public void returnsParsedActivities() throws Exception
     {
-        Activity activity = new Activity(1, "TYPE", Duration.ofDays(1), LocalDateTime.now(), 10.0);
+        Activity activity = new Activity(1, "TYPE", Duration.ofDays(1), LocalDateTime.now(),
+            Quantities.getQuantity(1, USCustomary.MILE));
         List<Activity> activities = Collections.singletonList(activity);
         when(parser.parse(anyString())).thenReturn(activities);
 
