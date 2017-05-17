@@ -2,8 +2,6 @@ package com.weizilla.garmin.entity;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceConstructor;
 
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
@@ -13,14 +11,12 @@ import java.util.Objects;
 
 public class Activity
 {
-    @Id
     private final long id;
     private final String type;
     private final Duration duration;
     private final LocalDateTime start;
     private final Quantity<Length> distance;
 
-    @PersistenceConstructor
     @JsonCreator
     public Activity(@JsonProperty("id") long id,
         @JsonProperty("type") String type,

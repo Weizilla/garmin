@@ -1,6 +1,6 @@
 package com.weizilla.garmin.fetcher.request;
 
-import com.weizilla.garmin.fetcher.UrlBases;
+import com.weizilla.garmin.configuration.UrlBases;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
 import org.junit.Test;

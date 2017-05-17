@@ -1,21 +1,18 @@
 package com.weizilla.garmin.fetcher.request;
 
-import com.weizilla.garmin.fetcher.UrlBases;
+import com.weizilla.garmin.configuration.UrlBases;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Component
-@Order(1)
+/**
+ * Order = 1
+ */
 public class LtLookupRequestFactory extends RequestFactory
 {
     private final UrlBases urlBases;
 
-    @Autowired
     public LtLookupRequestFactory(UrlBases urlBases)
     {
         this.urlBases = urlBases;

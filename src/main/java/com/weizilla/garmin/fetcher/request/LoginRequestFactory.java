@@ -1,24 +1,22 @@
 package com.weizilla.garmin.fetcher.request;
 
 import com.google.common.collect.Lists;
-import com.weizilla.garmin.fetcher.Credentials;
-import com.weizilla.garmin.fetcher.UrlBases;
+import com.weizilla.garmin.configuration.Credentials;
+import com.weizilla.garmin.configuration.UrlBases;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicNameValuePair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-@Order(2)
+/**
+ * Order = 2
+ */
 public class LoginRequestFactory extends RequestFactory
 {
     private static final BasicNameValuePair EVENT_ID = new BasicNameValuePair("_eventId", "submit");
@@ -28,8 +26,7 @@ public class LoginRequestFactory extends RequestFactory
     private final UrlBases urlBases;
     private final Credentials credentials;
 
-    @Autowired
-    public LoginRequestFactory( UrlBases urlBases, Credentials credentials)
+    public LoginRequestFactory(UrlBases urlBases, Credentials credentials)
     {
         this.urlBases = urlBases;
         this.credentials = credentials;

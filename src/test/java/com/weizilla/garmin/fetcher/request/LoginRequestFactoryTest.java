@@ -2,8 +2,8 @@ package com.weizilla.garmin.fetcher.request;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
-import com.weizilla.garmin.fetcher.Credentials;
-import com.weizilla.garmin.fetcher.UrlBases;
+import com.weizilla.garmin.configuration.Credentials;
+import com.weizilla.garmin.configuration.UrlBases;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;

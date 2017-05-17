@@ -1,14 +1,21 @@
 package com.weizilla.garmin.downloader;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.google.common.collect.Lists;
+import com.weizilla.garmin.configuration.Credentials;
+import com.weizilla.garmin.configuration.LogConfig;
+import com.weizilla.garmin.configuration.UrlBases;
 import com.weizilla.garmin.entity.Activity;
+import com.weizilla.garmin.fetcher.ActivityFetcher;
+import com.weizilla.garmin.fetcher.HttpClientFactory;
+import com.weizilla.garmin.fetcher.request.FollowTicketRequestFactory;
+import com.weizilla.garmin.fetcher.request.GetActivitiesRequestFactory;
+import com.weizilla.garmin.fetcher.request.LoginRequestFactory;
+import com.weizilla.garmin.fetcher.request.LtLookupRequestFactory;
+import com.weizilla.garmin.fetcher.request.RequestFactory;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
@@ -21,21 +28,38 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import static com.weizilla.test.TestUtils.readResource;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@ActiveProfiles("test")
 public class ActivityDownloaderIntTest
 {
     private static final int PORT = 8080;
-    @Autowired
     private ActivityDownloader downloader;
     @Rule
     public WireMockRule wireMock = new WireMockRule(options().port(PORT));
 
-    @Test
-    public void downloaderIsInitializedCorrectlyBySpring() throws Exception
-    {
-        assertThat(downloader).isNotNull();
+    @Before
+    public void setUp() throws Exception {
+        UrlBases bases = new UrlBases();
+        bases.setFollowTicket("http://localhost:8080");
+        bases.setGetActivities("http://localhost:8080");
+        bases.setLogin("http://localhost:8080");
+        bases.setLtLookup("http://localhost:8080");
+
+        LogConfig logConfig = new LogConfig();
+        logConfig.setResult(false);
+        logConfig.setUrl(true);
+
+        Credentials credentials = new Credentials();
+        credentials.setUsername("USERNAME");
+        credentials.setPassword("PASSWORD");
+
+        HttpClientFactory httpClientFactory = new HttpClientFactory();
+        List<RequestFactory> requestFactories = Lists.newArrayList(
+            new LtLookupRequestFactory(bases),
+            new LoginRequestFactory(bases, credentials),
+            new FollowTicketRequestFactory(bases),
+            new GetActivitiesRequestFactory(bases)
+        );
+        ActivityFetcher fetcher = new ActivityFetcher(httpClientFactory, requestFactories, logConfig);
+        downloader = new ActivityDownloader(new ActivityParser(), fetcher);
     }
 
     @Test

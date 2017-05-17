@@ -1,5 +1,6 @@
 package com.weizilla.garmin.fetcher;
 
+import com.weizilla.garmin.configuration.LogConfig;
 import com.weizilla.garmin.fetcher.request.RequestFactory;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -7,13 +8,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
 
-@Component
 public class ActivityFetcher
 {
     private static final Logger logger = LoggerFactory.getLogger(ActivityFetcher.class);
@@ -23,7 +21,6 @@ public class ActivityFetcher
     private final int rateLimit;
     private final LogConfig logConfig;
 
-    @Autowired
     public ActivityFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories,
         LogConfig logConfig)
     {

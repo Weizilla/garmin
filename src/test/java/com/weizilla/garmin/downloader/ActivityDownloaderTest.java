@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import systems.uom.common.USCustomary;
 import tec.uom.se.quantity.Quantities;
 
@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ActivityDownloaderTest
 {
+    private static final String JSON = "{}";
     @Mock
     private ActivityFetcher fetcher;
     @Mock
@@ -33,15 +34,14 @@ public class ActivityDownloaderTest
     public void setUp() throws Exception
     {
         downloader = new ActivityDownloader(parser, fetcher);
+        when(fetcher.fetch()).thenReturn(JSON);
     }
 
     @Test
     public void parseFetchedJson() throws Exception
     {
-        String json = "JSON";
-        when(fetcher.fetch()).thenReturn(json);
         downloader.download();
-        verify(parser).parse(json);
+        verify(parser).parse(JSON);
     }
 
     @Test

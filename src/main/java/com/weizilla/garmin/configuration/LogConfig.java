@@ -1,10 +1,5 @@
-package com.weizilla.garmin.fetcher;
+package com.weizilla.garmin.configuration;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
-@Component
-@ConfigurationProperties(prefix = "garmin.log")
 public class LogConfig
 {
     /**

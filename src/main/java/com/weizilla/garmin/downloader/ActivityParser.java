@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weizilla.garmin.entity.Activity;
-import org.springframework.stereotype.Component;
 import tec.uom.se.quantity.Quantities;
 
 import javax.measure.Quantity;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-@Component
 public class ActivityParser
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -62,7 +60,7 @@ public class ActivityParser
     {
         long activityId = jsonNode.at("/activityId").asLong();
         String type = jsonNode.at("/activityType/key").asText();
-        
+
         String distanceStr = jsonNode.at("/activitySummary/SumDistance/withUnitAbbr").asText();
         Quantity<Length> distance = Quantities.getQuantity(distanceStr).asType(Length.class);
 
