@@ -41,18 +41,6 @@ public class LoginRequestFactoryTest
     }
 
     @Test
-    public void parsesHtmlForLtValue() throws Exception
-    {
-        String lt = "a1b2c3";
-        String input = "<input name='lt' value='" + lt + "'/>";
-        HttpUriRequest request = factory.create(input);
-        HttpPost post = (HttpPost) request;
-        HttpEntity entity = post.getEntity();
-        String entities = CharStreams.toString(new InputStreamReader(entity.getContent(), Charsets.UTF_8));
-        assertThat(entities).contains(lt);
-    }
-
-    @Test
     public void doesNotExtractResult() throws Exception
     {
         assertThat(factory.isExtractResult()).isTrue();
