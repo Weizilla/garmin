@@ -1,17 +1,15 @@
 package com.weizilla.garmin.downloader;
 
-import com.google.common.collect.Lists;
-import com.weizilla.garmin.entity.Activity;
-import com.weizilla.garmin.fetcher.ActivityFetcher;
 import com.weizilla.garmin.configuration.Credentials;
-import com.weizilla.garmin.fetcher.HttpClientFactory;
 import com.weizilla.garmin.configuration.LogConfig;
 import com.weizilla.garmin.configuration.UrlBases;
+import com.weizilla.garmin.entity.Activity;
+import com.weizilla.garmin.fetcher.ActivityFetcher;
+import com.weizilla.garmin.fetcher.HttpClientFactory;
 import com.weizilla.garmin.fetcher.request.FollowTicketRequestFactory;
 import com.weizilla.garmin.fetcher.request.GetActivitiesRequestFactory;
 import com.weizilla.garmin.fetcher.request.LoginRequestFactory;
 import com.weizilla.garmin.fetcher.request.LtLookupRequestFactory;
-import com.weizilla.garmin.fetcher.request.RequestFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,13 +42,12 @@ public class ActivityDownloaderRunner
         ActivityParser parser = new ActivityParser();
 
         HttpClientFactory httpClientFactory = new HttpClientFactory();
-        List<RequestFactory> requestFactories = Lists.newArrayList(
-            new LtLookupRequestFactory(bases),
-            new LoginRequestFactory(bases, credentials),
-            new FollowTicketRequestFactory(bases),
-            new GetActivitiesRequestFactory(bases)
-        );
-        ActivityFetcher fetcher = new ActivityFetcher(httpClientFactory, requestFactories, logConfig);
+        LtLookupRequestFactory ltLookupRequestFactory = new LtLookupRequestFactory(bases);
+        LoginRequestFactory loginRequestFactory = new LoginRequestFactory(bases, credentials);
+        FollowTicketRequestFactory followTicketRequestFactory = new FollowTicketRequestFactory(bases);
+        GetActivitiesRequestFactory getActivitiesRequestFactory = new GetActivitiesRequestFactory(bases);
+        ActivityFetcher fetcher = new ActivityFetcher(httpClientFactory, ltLookupRequestFactory,
+            loginRequestFactory, getActivitiesRequestFactory, followTicketRequestFactory, logConfig);
         ActivityDownloader downloader = new ActivityDownloader(parser, fetcher);
         List<Activity> activities = downloader.download();
         activities.forEach(a -> logger.info(a.toString()));

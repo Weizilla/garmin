@@ -5,6 +5,7 @@ import com.weizilla.garmin.fetcher.ActivityFetcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.util.List;
 
 public class ActivityDownloader
@@ -13,6 +14,7 @@ public class ActivityDownloader
     private final ActivityParser parser;
     private final ActivityFetcher fetcher;
 
+    @Inject
     public ActivityDownloader(ActivityParser parser, ActivityFetcher fetcher)
     {
         this.parser = parser;

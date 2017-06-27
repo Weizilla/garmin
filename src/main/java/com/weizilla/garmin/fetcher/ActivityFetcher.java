@@ -1,6 +1,11 @@
 package com.weizilla.garmin.fetcher;
 
+import com.google.common.collect.Lists;
 import com.weizilla.garmin.configuration.LogConfig;
+import com.weizilla.garmin.fetcher.request.FollowTicketRequestFactory;
+import com.weizilla.garmin.fetcher.request.GetActivitiesRequestFactory;
+import com.weizilla.garmin.fetcher.request.LoginRequestFactory;
+import com.weizilla.garmin.fetcher.request.LtLookupRequestFactory;
 import com.weizilla.garmin.fetcher.request.RequestFactory;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -9,6 +14,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.List;
 
@@ -21,17 +27,25 @@ public class ActivityFetcher
     private final int rateLimit;
     private final LogConfig logConfig;
 
-    public ActivityFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories,
-        LogConfig logConfig)
-    {
-        this(clientFactory, requestFactories, DEFAULT_RATE_LIMIT_MS, logConfig);
+    @Inject
+    public ActivityFetcher(HttpClientFactory clientFactory,
+        LtLookupRequestFactory ltLookupRequestFactory,
+        LoginRequestFactory loginRequestFactory,
+        GetActivitiesRequestFactory getActivitiesRequestFactory,
+        FollowTicketRequestFactory followTicketRequestFactory,
+        LogConfig logConfig) {
+
+        this(clientFactory, ltLookupRequestFactory, loginRequestFactory,
+            getActivitiesRequestFactory, followTicketRequestFactory, DEFAULT_RATE_LIMIT_MS, logConfig);
     }
 
-    ActivityFetcher(HttpClientFactory clientFactory, List<RequestFactory> requestFactories,
-        int rateLimit, LogConfig logConfig)
-    {
+    public ActivityFetcher(HttpClientFactory clientFactory, LtLookupRequestFactory ltLookupRequestFactory,
+        LoginRequestFactory loginRequestFactory, GetActivitiesRequestFactory getActivitiesRequestFactory,
+        FollowTicketRequestFactory followTicketRequestFactory, int rateLimit, LogConfig logConfig) {
+
         this.clientFactory = clientFactory;
-        this.requestFactories = requestFactories;
+        requestFactories = Lists.newArrayList(ltLookupRequestFactory, loginRequestFactory,
+            followTicketRequestFactory, getActivitiesRequestFactory);
         this.rateLimit = rateLimit;
         this.logConfig = logConfig;
     }
@@ -41,6 +55,8 @@ public class ActivityFetcher
         String lastResult = null;
         try (CloseableHttpClient client = clientFactory.build())
         {
+            //TODO refactor out this loop as request factories are always the same and in the
+            // same order
             for (RequestFactory factory : requestFactories)
             {
                 lastResult = execute(factory, lastResult, client);
@@ -57,7 +73,7 @@ public class ActivityFetcher
         Thread.sleep(rateLimit);
         try (CloseableHttpResponse response = httpClient.execute(request))
         {
-            String result = factory.isExtractResult() ? EntityUtils.toString(response.getEntity()) : null;
+            String result = factory.isExtractResult() && response != null ? EntityUtils.toString(response.getEntity()) : null;
             logResult(factory, result);
             return result;
         }
