@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weizilla.garmin.entity.Activity;
 import tec.uom.se.quantity.Quantities;
 
+import javax.inject.Singleton;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+@Singleton
 public class ActivityParser
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();

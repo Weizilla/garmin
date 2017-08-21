@@ -15,9 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.List;
 
+@Singleton
 public class ActivityFetcher
 {
     private static final Logger logger = LoggerFactory.getLogger(ActivityFetcher.class);

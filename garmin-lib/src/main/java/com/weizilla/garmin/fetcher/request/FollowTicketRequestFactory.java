@@ -5,6 +5,8 @@ import com.weizilla.garmin.configuration.UrlBases;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,11 +14,13 @@ import java.util.regex.Pattern;
 /**
  * Order = 3
  */
+@Singleton
 public class FollowTicketRequestFactory extends RequestFactory
 {
     private static final String POST_AUTH_URL = "/post-auth/login?";
     private final UrlBases urlBases;
 
+    @Inject
     public FollowTicketRequestFactory(UrlBases urlBases)
     {
         this.urlBases = urlBases;

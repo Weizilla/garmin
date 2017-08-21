@@ -9,6 +9,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicNameValuePair;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import java.util.List;
 /**
  * Order = 2
  */
+@Singleton
 public class LoginRequestFactory extends RequestFactory
 {
     private static final BasicNameValuePair EVENT_ID = new BasicNameValuePair("_eventId", "submit");
@@ -26,6 +29,7 @@ public class LoginRequestFactory extends RequestFactory
     private final UrlBases urlBases;
     private final Credentials credentials;
 
+    @Inject
     public LoginRequestFactory(UrlBases urlBases, Credentials credentials)
     {
         this.urlBases = urlBases;
