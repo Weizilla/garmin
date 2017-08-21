@@ -1,4 +1,4 @@
-package com.weizilla.garmin.fetcher.request;
+package com.weizilla.garmin.fetcher.step;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class RequestFactory
+public abstract class Step
 {
     protected static final String SSO_URL;
 

@@ -1,4 +1,4 @@
-package com.weizilla.garmin.fetcher.request;
+package com.weizilla.garmin.fetcher.step;
 
 import com.weizilla.garmin.configuration.UrlBases;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -7,26 +7,26 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LtLookupRequestFactoryTest
+public class GetActivitiesStepTest
 {
-    private LtLookupRequestFactory factory;
+    private GetActivitiesStep step;
 
     @Before
     public void setUp() throws Exception
     {
-        factory = new LtLookupRequestFactory(new UrlBases());
+        step = new GetActivitiesStep(new UrlBases());
     }
 
     @Test
     public void returnsHttpRequest() throws Exception
     {
-        HttpUriRequest request = factory.create(null);
-        assertThat(request.getURI().toString()).contains(RequestFactory.SSO_URL);
+        HttpUriRequest request = step.create(null);
+        assertThat(request.getURI().toString()).contains(GetActivitiesStep.GET_ACTIVITIES_URL);
     }
 
     @Test
     public void extractsResult() throws Exception
     {
-        assertThat(factory.isExtractResult()).isTrue();
+        assertThat(step.isExtractResult()).isTrue();
     }
 }

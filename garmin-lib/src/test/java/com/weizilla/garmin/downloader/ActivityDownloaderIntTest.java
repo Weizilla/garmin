@@ -7,10 +7,10 @@ import com.weizilla.garmin.configuration.UrlBases;
 import com.weizilla.garmin.entity.Activity;
 import com.weizilla.garmin.fetcher.ActivityFetcher;
 import com.weizilla.garmin.fetcher.HttpClientFactory;
-import com.weizilla.garmin.fetcher.request.FollowTicketRequestFactory;
-import com.weizilla.garmin.fetcher.request.GetActivitiesRequestFactory;
-import com.weizilla.garmin.fetcher.request.LoginRequestFactory;
-import com.weizilla.garmin.fetcher.request.LtLookupRequestFactory;
+import com.weizilla.garmin.fetcher.step.FollowTicketStep;
+import com.weizilla.garmin.fetcher.step.GetActivitiesStep;
+import com.weizilla.garmin.fetcher.step.LoginStep;
+import com.weizilla.garmin.fetcher.step.LtLookupStep;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,14 +50,14 @@ public class ActivityDownloaderIntTest
         credentials.setPassword("PASSWORD");
 
         HttpClientFactory httpClientFactory = new HttpClientFactory();
-        LtLookupRequestFactory ltLookupRequestFactory = new LtLookupRequestFactory(bases);
-        LoginRequestFactory loginRequestFactory = new LoginRequestFactory(bases, credentials);
-        FollowTicketRequestFactory followTicketRequestFactory =
-            new FollowTicketRequestFactory(bases);
-        GetActivitiesRequestFactory getActivitiesRequestFactory =
-            new GetActivitiesRequestFactory(bases);
-        ActivityFetcher fetcher = new ActivityFetcher(httpClientFactory, ltLookupRequestFactory,
-            loginRequestFactory, getActivitiesRequestFactory, followTicketRequestFactory, logConfig);
+        LtLookupStep ltLookupStep = new LtLookupStep(bases);
+        LoginStep loginStep = new LoginStep(bases, credentials);
+        FollowTicketStep followTicketStep =
+            new FollowTicketStep(bases);
+        GetActivitiesStep getActivitiesStep =
+            new GetActivitiesStep(bases);
+        ActivityFetcher fetcher = new ActivityFetcher(httpClientFactory, ltLookupStep,
+            loginStep, getActivitiesStep, followTicketStep, logConfig);
         downloader = new ActivityDownloader(new ActivityParser(), fetcher);
     }
 

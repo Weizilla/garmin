@@ -1,10 +1,10 @@
 package com.weizilla.garmin.fetcher;
 
 import com.weizilla.garmin.configuration.LogConfig;
-import com.weizilla.garmin.fetcher.request.FollowTicketRequestFactory;
-import com.weizilla.garmin.fetcher.request.GetActivitiesRequestFactory;
-import com.weizilla.garmin.fetcher.request.LoginRequestFactory;
-import com.weizilla.garmin.fetcher.request.LtLookupRequestFactory;
+import com.weizilla.garmin.fetcher.step.FollowTicketStep;
+import com.weizilla.garmin.fetcher.step.GetActivitiesStep;
+import com.weizilla.garmin.fetcher.step.LoginStep;
+import com.weizilla.garmin.fetcher.step.LtLookupStep;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -31,44 +31,44 @@ public class ActivityFetcherTest
 
     private ActivityFetcher fetcher;
     @Mock
-    private FollowTicketRequestFactory followTicketRequestFactory;
+    private FollowTicketStep followTicketStep;
     @Mock
-    private GetActivitiesRequestFactory getActivitiesRequestFactory;
+    private GetActivitiesStep getActivitiesStep;
     @Mock
-    private LoginRequestFactory loginRequestFactory;
+    private LoginStep loginStep;
     @Mock
-    private LtLookupRequestFactory ltLookupRequestFactory;
-
+    private LtLookupStep ltLookupStep;
     @Mock
     private HttpRequestBase request;
-
     @Mock
     private CloseableHttpClient client;
 
     @Before
     public void setUp() throws Exception
     {
-        when(ltLookupRequestFactory.create(any())).thenReturn(request);
-        when(ltLookupRequestFactory.isExtractResult()).thenReturn(true);
+        when(ltLookupStep.create(any())).thenReturn(request);
+        when(ltLookupStep.isExtractResult()).thenReturn(true);
 
-        when(loginRequestFactory.create(any())).thenReturn(request);
-        when(loginRequestFactory.isExtractResult()).thenReturn(true);
+        when(loginStep.create(any())).thenReturn(request);
+        when(loginStep.isExtractResult()).thenReturn(true);
 
-        when(getActivitiesRequestFactory.create(any())).thenReturn(request);
-        when(getActivitiesRequestFactory.isExtractResult()).thenReturn(true);
+        when(getActivitiesStep.create(any())).thenReturn(request);
+        when(getActivitiesStep.isExtractResult()).thenReturn(true);
 
-        when(followTicketRequestFactory.create(any())).thenReturn(request);
-        when(followTicketRequestFactory.isExtractResult()).thenReturn(true);
+        when(followTicketStep.create(any())).thenReturn(request);
+        when(followTicketStep.isExtractResult()).thenReturn(true);
 
-        fetcher = new ActivityFetcher(new HttpClientFactoryStub(), ltLookupRequestFactory, loginRequestFactory,
-            getActivitiesRequestFactory, followTicketRequestFactory, 0, new LogConfig());
+        fetcher = new ActivityFetcher(new HttpClientFactoryStub(), ltLookupStep,
+            loginStep,
+            getActivitiesStep, followTicketStep, 0, new LogConfig());
     }
 
     @Test
     public void createsWithDefaultLimit() throws Exception
     {
-        fetcher = new ActivityFetcher(new HttpClientFactoryStub(), ltLookupRequestFactory, loginRequestFactory,
-            getActivitiesRequestFactory, followTicketRequestFactory, new LogConfig());
+        fetcher = new ActivityFetcher(new HttpClientFactoryStub(), ltLookupStep,
+            loginStep,
+            getActivitiesStep, followTicketStep, new LogConfig());
         assertThat(fetcher.getRateLimit()).isEqualTo(ActivityFetcher.DEFAULT_RATE_LIMIT_MS);
     }
 
@@ -95,10 +95,10 @@ public class ActivityFetcherTest
         when(client.execute(request)).thenReturn(httpResponse1, httpResponse2, httpResponse3, httpResponse4);
 
         String result = fetcher.fetch();
-        verify(ltLookupRequestFactory).create(null);
-        verify(loginRequestFactory).create(response1);
-        verify(followTicketRequestFactory).create(response2);
-        verify(getActivitiesRequestFactory).create(response3);
+        verify(ltLookupStep).create(null);
+        verify(loginStep).create(response1);
+        verify(followTicketStep).create(response2);
+        verify(getActivitiesStep).create(response3);
         assertThat(result).isEqualTo(response4);
     }
 

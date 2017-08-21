@@ -1,4 +1,4 @@
-package com.weizilla.garmin.fetcher.request;
+package com.weizilla.garmin.fetcher.step;
 
 import com.google.common.collect.Lists;
 import com.weizilla.garmin.configuration.Credentials;
@@ -20,7 +20,7 @@ import java.util.List;
  * Order = 2
  */
 @Singleton
-public class LoginRequestFactory extends RequestFactory
+public class LoginStep extends Step
 {
     private static final BasicNameValuePair EVENT_ID = new BasicNameValuePair("_eventId", "submit");
     private static final BasicNameValuePair EMBED = new BasicNameValuePair("embed", "true");
@@ -30,7 +30,7 @@ public class LoginRequestFactory extends RequestFactory
     private final Credentials credentials;
 
     @Inject
-    public LoginRequestFactory(UrlBases urlBases, Credentials credentials)
+    public LoginStep(UrlBases urlBases, Credentials credentials)
     {
         this.urlBases = urlBases;
         this.credentials = credentials;

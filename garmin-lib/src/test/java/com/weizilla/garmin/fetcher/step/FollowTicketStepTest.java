@@ -1,4 +1,4 @@
-package com.weizilla.garmin.fetcher.request;
+package com.weizilla.garmin.fetcher.step;
 
 import com.weizilla.garmin.GarminException;
 import com.weizilla.garmin.configuration.UrlBases;
@@ -8,33 +8,33 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FollowTicketRequestFactoryTest
+public class FollowTicketStepTest
 {
-    private FollowTicketRequestFactory factory;
+    private FollowTicketStep step;
 
     @Before
     public void setUp() throws Exception
     {
-        factory = new FollowTicketRequestFactory(new UrlBases());
+        step = new FollowTicketStep(new UrlBases());
     }
 
     @Test
     public void parsesInputForTicketUrl() throws Exception
     {
         String input = "'https://connect.garmin.com/post-auth/login?ticket=1234ABCD';";
-        HttpUriRequest request = factory.create(input);
+        HttpUriRequest request = step.create(input);
         assertThat(request.getURI().toString()).contains("ticket=1234ABCD");
     }
 
     @Test(expected = GarminException.class)
     public void throwsExceptionIfNoTicketFound() throws Exception
     {
-        factory.create("RANDOM INPUT");
+        step.create("RANDOM INPUT");
     }
 
     @Test
     public void doesNotExtractResult() throws Exception
     {
-        assertThat(factory.isExtractResult()).isFalse();
+        assertThat(step.isExtractResult()).isFalse();
     }
 }

@@ -1,4 +1,4 @@
-package com.weizilla.garmin.fetcher.request;
+package com.weizilla.garmin.fetcher.step;
 
 import com.weizilla.garmin.GarminException;
 import com.weizilla.garmin.configuration.UrlBases;
@@ -15,13 +15,13 @@ import java.util.regex.Pattern;
  * Order = 3
  */
 @Singleton
-public class FollowTicketRequestFactory extends RequestFactory
+public class FollowTicketStep extends Step
 {
     private static final String POST_AUTH_URL = "/post-auth/login?";
     private final UrlBases urlBases;
 
     @Inject
-    public FollowTicketRequestFactory(UrlBases urlBases)
+    public FollowTicketStep(UrlBases urlBases)
     {
         this.urlBases = urlBases;
     }

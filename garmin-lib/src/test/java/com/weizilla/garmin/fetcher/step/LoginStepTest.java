@@ -1,4 +1,4 @@
-package com.weizilla.garmin.fetcher.request;
+package com.weizilla.garmin.fetcher.step;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
@@ -14,11 +14,11 @@ import java.io.InputStreamReader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LoginRequestFactoryTest
+public class LoginStepTest
 {
     private static final String USERNAME = "USERNAME";
     private static final String PASSWORD = "PASSWORD";
-    private LoginRequestFactory factory;
+    private LoginStep step;
 
     @Before
     public void setUp() throws Exception
@@ -26,13 +26,13 @@ public class LoginRequestFactoryTest
         Credentials credentials = new Credentials();
         credentials.setUsername(USERNAME);
         credentials.setPassword(PASSWORD);
-        factory = new LoginRequestFactory(new UrlBases(), credentials);
+        step = new LoginStep(new UrlBases(), credentials);
     }
 
     @Test
     public void createsHttpPostRequestWithUsernameAndPassword() throws Exception
     {
-        HttpUriRequest request = factory.create("<input name='lt' value='a1b2c3'/>\"");
+        HttpUriRequest request = step.create("<input name='lt' value='a1b2c3'/>\"");
         HttpPost post = (HttpPost) request;
         HttpEntity entity = post.getEntity();
         String entities = CharStreams.toString(new InputStreamReader(entity.getContent(), Charsets.UTF_8));
@@ -43,6 +43,6 @@ public class LoginRequestFactoryTest
     @Test
     public void doesNotExtractResult() throws Exception
     {
-        assertThat(factory.isExtractResult()).isTrue();
+        assertThat(step.isExtractResult()).isTrue();
     }
 }

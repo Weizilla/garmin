@@ -7,7 +7,7 @@ public class LogConfig
      */
     private boolean result;
     /**
-     * Log the request URL
+     * Log the step URL
      */
     private boolean url;
 

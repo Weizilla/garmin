@@ -1,4 +1,4 @@
-package com.weizilla.garmin.fetcher.request;
+package com.weizilla.garmin.fetcher.step;
 
 import com.weizilla.garmin.configuration.UrlBases;
 import org.apache.http.client.methods.HttpGet;
@@ -6,26 +6,26 @@ import org.apache.http.client.methods.HttpUriRequest;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.IOException;
 
 /**
- * Order = 1
+ * Order = 4
  */
 @Singleton
-public class LtLookupRequestFactory extends RequestFactory
+public class GetActivitiesStep extends Step
 {
+    protected static final String GET_ACTIVITIES_URL = "/proxy/activity-search-service-1.2/json/activities";
     private final UrlBases urlBases;
 
     @Inject
-    public LtLookupRequestFactory(UrlBases urlBases)
+    public GetActivitiesStep(UrlBases urlBases)
     {
         this.urlBases = urlBases;
     }
 
     @Override
-    public HttpUriRequest create(String prevResult) throws IOException
+    public HttpUriRequest create(String prevResult)
     {
-        return new HttpGet(urlBases.getLtLookup() + SSO_URL);
+        return new HttpGet(urlBases.getGetActivities() + GET_ACTIVITIES_URL);
     }
 
     @Override
@@ -37,6 +37,6 @@ public class LtLookupRequestFactory extends RequestFactory
     @Override
     public String getStepName()
     {
-        return "LT Lookup";
+        return "Get Activities";
     }
 }
