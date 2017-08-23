@@ -11,12 +11,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class Step
-{
+public abstract class Step {
     protected static final String SSO_URL;
 
-    static
-    {
+    static {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("service", "https://connect.garmin.com/post-auth/login"));
         params.add(new BasicNameValuePair("clientId", "GarminConnect"));
@@ -31,13 +29,11 @@ public abstract class Step
 
     public abstract String getStepName();
 
-    protected static String encode(String key, String value)
-    {
+    protected static String encode(String key, String value) {
         return encode(Collections.singletonList(new BasicNameValuePair(key, value)));
     }
 
-    protected static String encode(List<NameValuePair> params)
-    {
+    protected static String encode(List<NameValuePair> params) {
         return URLEncodedUtils.format(params, StandardCharsets.UTF_8);
     }
 }

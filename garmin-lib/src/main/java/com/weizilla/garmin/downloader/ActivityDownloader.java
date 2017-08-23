@@ -10,21 +10,18 @@ import javax.inject.Singleton;
 import java.util.List;
 
 @Singleton
-public class ActivityDownloader
-{
+public class ActivityDownloader {
     private static final Logger logger = LoggerFactory.getLogger(ActivityDownloader.class);
     private final ActivityParser parser;
     private final ActivityFetcher fetcher;
 
     @Inject
-    public ActivityDownloader(ActivityParser parser, ActivityFetcher fetcher)
-    {
+    public ActivityDownloader(ActivityParser parser, ActivityFetcher fetcher) {
         this.parser = parser;
         this.fetcher = fetcher;
     }
 
-    public List<Activity> download() throws Exception
-    {
+    public List<Activity> download() throws Exception {
         String json = fetcher.fetch();
         List<Activity> activities = parser.parse(json);
         logger.debug("Downloaded {} activities from Garmin", activities.size());

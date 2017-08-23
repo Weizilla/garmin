@@ -14,8 +14,12 @@ import java.time.LocalDateTime;
 @JsonDeserialize(as = ImmutableActivity.class)
 public interface Activity {
     long getId();
+
     String getType();
+
     LocalDateTime getStart();
+
     Duration getDuration();
+
     Quantity<Length> getDistance();
 }

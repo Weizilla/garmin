@@ -11,32 +11,28 @@ import javax.inject.Singleton;
  * Order = 4
  */
 @Singleton
-public class GetActivitiesStep extends Step
-{
-    protected static final String GET_ACTIVITIES_URL = "/proxy/activity-search-service-1.2/json/activities";
+public class GetActivitiesStep extends Step {
+    protected static final String GET_ACTIVITIES_URL =
+        "/proxy/activity-search-service-1.2/json/activities";
     private final UrlBases urlBases;
 
     @Inject
-    public GetActivitiesStep(UrlBases urlBases)
-    {
+    public GetActivitiesStep(UrlBases urlBases) {
         this.urlBases = urlBases;
     }
 
     @Override
-    public HttpUriRequest create(String prevResult)
-    {
+    public HttpUriRequest create(String prevResult) {
         return new HttpGet(urlBases.getGetActivities() + GET_ACTIVITIES_URL);
     }
 
     @Override
-    public boolean isExtractResult()
-    {
+    public boolean isExtractResult() {
         return true;
     }
 
     @Override
-    public String getStepName()
-    {
+    public String getStepName() {
         return "Get Activities";
     }
 }

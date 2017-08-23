@@ -22,8 +22,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ActivityDownloaderTest
-{
+public class ActivityDownloaderTest {
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
@@ -35,22 +34,19 @@ public class ActivityDownloaderTest
     private ActivityDownloader downloader;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         downloader = new ActivityDownloader(parser, fetcher);
         when(fetcher.fetch()).thenReturn(JSON);
     }
 
     @Test
-    public void parseFetchedJson() throws Exception
-    {
+    public void parseFetchedJson() throws Exception {
         downloader.download();
         verify(parser).parse(JSON);
     }
 
     @Test
-    public void returnsParsedActivities() throws Exception
-    {
+    public void returnsParsedActivities() throws Exception {
         Activity activity = ImmutableActivity.builder()
             .id(1)
             .type("TYPE")

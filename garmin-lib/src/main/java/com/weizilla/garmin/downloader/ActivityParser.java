@@ -23,19 +23,15 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Singleton
-public class ActivityParser
-{
+public class ActivityParser {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    static
-    {
+    static {
         MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public List<Activity> parse(String json) throws IOException
-    {
-        if (json == null || json.trim().isEmpty())
-        {
+    public List<Activity> parse(String json) throws IOException {
+        if (json == null || json.trim().isEmpty()) {
             return Collections.emptyList();
         }
 
@@ -44,22 +40,19 @@ public class ActivityParser
         return parseActivities(activities);
     }
 
-    private static List<Activity> parseActivities(Iterator<JsonNode> activities)
-    {
+    private static List<Activity> parseActivities(Iterator<JsonNode> activities) {
         return toStream(activities)
             .map(n -> n.get("activity"))
             .map(ActivityParser::parseActivity)
             .collect(Collectors.toList());
     }
 
-    private static <T> Stream<T> toStream(Iterator<T> iterator)
-    {
+    private static <T> Stream<T> toStream(Iterator<T> iterator) {
         Iterable<T> iterable = () -> iterator;
         return StreamSupport.stream(iterable.spliterator(), false);
     }
 
-    private static Activity parseActivity(JsonNode jsonNode)
-    {
+    private static Activity parseActivity(JsonNode jsonNode) {
         long activityId = jsonNode.at("/activityId").asLong();
         String type = jsonNode.at("/activityType/key").asText();
 

@@ -15,39 +15,34 @@ import java.util.regex.Pattern;
  * Order = 3
  */
 @Singleton
-public class FollowTicketStep extends Step
-{
+public class FollowTicketStep extends Step {
     private static final String POST_AUTH_URL = "/post-auth/login?";
     private final UrlBases urlBases;
 
     @Inject
-    public FollowTicketStep(UrlBases urlBases)
-    {
+    public FollowTicketStep(UrlBases urlBases) {
         this.urlBases = urlBases;
     }
 
     @Override
-    public HttpUriRequest create(String prevResult) throws IOException
-    {
+    public HttpUriRequest create(String prevResult) throws IOException {
         Pattern ticketPattern = Pattern.compile("ticket=(.*)'");
         Matcher matcher = ticketPattern.matcher(prevResult);
-        if (matcher.find())
-        {
+        if (matcher.find()) {
             String ticket = matcher.group(1);
-            return new HttpGet(urlBases.getFollowTicket() + POST_AUTH_URL + encode("ticket", ticket));
+            return new HttpGet(
+                urlBases.getFollowTicket() + POST_AUTH_URL + encode("ticket", ticket));
         }
         throw new GarminException("Ticket not found in resulting html");
     }
 
     @Override
-    public boolean isExtractResult()
-    {
+    public boolean isExtractResult() {
         return false;
     }
 
     @Override
-    public String getStepName()
-    {
+    public String getStepName() {
         return "Follow Ticket";
     }
 }

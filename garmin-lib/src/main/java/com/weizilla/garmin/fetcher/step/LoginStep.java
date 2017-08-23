@@ -20,25 +20,24 @@ import java.util.List;
  * Order = 2
  */
 @Singleton
-public class LoginStep extends Step
-{
+public class LoginStep extends Step {
     private static final BasicNameValuePair EVENT_ID = new BasicNameValuePair("_eventId", "submit");
     private static final BasicNameValuePair EMBED = new BasicNameValuePair("embed", "true");
-    private static final BasicNameValuePair DISPLAY_NAME = new BasicNameValuePair("displayNameRequired", "false");
-    private static final List<BasicNameValuePair> PARAMS = Lists.newArrayList(EVENT_ID, EMBED, DISPLAY_NAME);
+    private static final BasicNameValuePair DISPLAY_NAME =
+        new BasicNameValuePair("displayNameRequired", "false");
+    private static final List<BasicNameValuePair> PARAMS =
+        Lists.newArrayList(EVENT_ID, EMBED, DISPLAY_NAME);
     private final UrlBases urlBases;
     private final Credentials credentials;
 
     @Inject
-    public LoginStep(UrlBases urlBases, Credentials credentials)
-    {
+    public LoginStep(UrlBases urlBases, Credentials credentials) {
         this.urlBases = urlBases;
         this.credentials = credentials;
     }
 
     @Override
-    public HttpUriRequest create(String prevResult) throws IOException
-    {
+    public HttpUriRequest create(String prevResult) throws IOException {
         List<NameValuePair> data = new ArrayList<>();
         data.addAll(PARAMS);
         data.add(new BasicNameValuePair("username", credentials.getUsername()));
@@ -50,14 +49,12 @@ public class LoginStep extends Step
     }
 
     @Override
-    public boolean isExtractResult()
-    {
+    public boolean isExtractResult() {
         return true;
     }
 
     @Override
-    public String getStepName()
-    {
+    public String getStepName() {
         return "Login";
     }
 }

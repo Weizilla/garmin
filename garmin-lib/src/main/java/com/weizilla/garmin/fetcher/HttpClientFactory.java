@@ -9,10 +9,8 @@ import org.apache.http.impl.client.LaxRedirectStrategy;
 import javax.inject.Singleton;
 
 @Singleton
-public class HttpClientFactory
-{
-    public CloseableHttpClient build()
-    {
+public class HttpClientFactory {
+    public CloseableHttpClient build() {
         RequestConfig config = RequestConfig.custom()
             .setCircularRedirectsAllowed(true)
             .setRedirectsEnabled(true)

@@ -26,8 +26,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import static com.weizilla.test.TestUtils.readResource;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ActivityDownloaderIntTest
-{
+public class ActivityDownloaderIntTest {
     private static final int PORT = 8080;
     private ActivityDownloader downloader;
     @Rule
@@ -62,8 +61,7 @@ public class ActivityDownloaderIntTest
     }
 
     @Test
-    public void downloadsActivitiesWithUrlCalls() throws Exception
-    {
+    public void downloadsActivitiesWithUrlCalls() throws Exception {
         stubFor(get(urlMatching("/sso/login.*"))
             .willReturn(aResponse()
                 .withHeader("Content-Type", "text/html; charset=utf-8")

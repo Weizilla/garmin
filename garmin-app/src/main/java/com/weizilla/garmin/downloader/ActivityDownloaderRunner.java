@@ -8,8 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class ActivityDownloaderRunner
-{
+public class ActivityDownloaderRunner {
     private static final Logger logger = LoggerFactory.getLogger(ActivityDownloaderRunner.class);
 
     public static void main(String[] args) throws Exception {

@@ -7,26 +7,22 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GetActivitiesStepTest
-{
+public class GetActivitiesStepTest {
     private GetActivitiesStep step;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         step = new GetActivitiesStep(new UrlBases());
     }
 
     @Test
-    public void returnsHttpRequest() throws Exception
-    {
+    public void returnsHttpRequest() throws Exception {
         HttpUriRequest request = step.create(null);
         assertThat(request.getURI().toString()).contains(GetActivitiesStep.GET_ACTIVITIES_URL);
     }
 
     @Test
-    public void extractsResult() throws Exception
-    {
+    public void extractsResult() throws Exception {
         assertThat(step.isExtractResult()).isTrue();
     }
 }

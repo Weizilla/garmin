@@ -7,26 +7,22 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LtLookupStepTest
-{
+public class LtLookupStepTest {
     private LtLookupStep step;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         step = new LtLookupStep(new UrlBases());
     }
 
     @Test
-    public void returnsHttpRequest() throws Exception
-    {
+    public void returnsHttpRequest() throws Exception {
         HttpUriRequest request = step.create(null);
         assertThat(request.getURI().toString()).contains(Step.SSO_URL);
     }
 
     @Test
-    public void extractsResult() throws Exception
-    {
+    public void extractsResult() throws Exception {
         assertThat(step.isExtractResult()).isTrue();
     }
 }

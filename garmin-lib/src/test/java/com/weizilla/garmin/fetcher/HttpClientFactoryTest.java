@@ -6,21 +6,17 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HttpClientFactoryTest
-{
+public class HttpClientFactoryTest {
     private HttpClientFactory factory;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         factory = new HttpClientFactory();
     }
 
     @Test
-    public void createsClientWithCookieStore() throws Exception
-    {
-        try (CloseableHttpClient client = factory.build())
-        {
+    public void createsClientWithCookieStore() throws Exception {
+        try (CloseableHttpClient client = factory.build()) {
             assertThat(client).isNotNull();
         }
     }

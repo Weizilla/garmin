@@ -1,7 +1,6 @@
 package com.weizilla.garmin.configuration;
 
-public class UrlBases
-{
+public class UrlBases {
     /**
      * The base url for getting activities
      */
@@ -19,43 +18,35 @@ public class UrlBases
      */
     private String ltLookup;
 
-    public String getGetActivities()
-    {
+    public String getGetActivities() {
         return getActivities;
     }
 
-    public void setGetActivities(String getActivities)
-    {
+    public void setGetActivities(String getActivities) {
         this.getActivities = getActivities;
     }
 
-    public String getFollowTicket()
-    {
+    public String getFollowTicket() {
         return followTicket;
     }
 
-    public void setFollowTicket(String followTicket)
-    {
+    public void setFollowTicket(String followTicket) {
         this.followTicket = followTicket;
     }
 
-    public String getLogin()
-    {
+    public String getLogin() {
         return login;
     }
 
-    public void setLogin(String login)
-    {
+    public void setLogin(String login) {
         this.login = login;
     }
 
-    public String getLtLookup()
-    {
+    public String getLtLookup() {
         return ltLookup;
     }
 
-    public void setLtLookup(String ltLookup)
-    {
+    public void setLtLookup(String ltLookup) {
         this.ltLookup = ltLookup;
     }
 }

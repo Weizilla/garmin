@@ -14,15 +14,13 @@ import java.io.InputStreamReader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LoginStepTest
-{
+public class LoginStepTest {
     private static final String USERNAME = "USERNAME";
     private static final String PASSWORD = "PASSWORD";
     private LoginStep step;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         Credentials credentials = new Credentials();
         credentials.setUsername(USERNAME);
         credentials.setPassword(PASSWORD);
@@ -30,19 +28,18 @@ public class LoginStepTest
     }
 
     @Test
-    public void createsHttpPostRequestWithUsernameAndPassword() throws Exception
-    {
+    public void createsHttpPostRequestWithUsernameAndPassword() throws Exception {
         HttpUriRequest request = step.create("<input name='lt' value='a1b2c3'/>\"");
         HttpPost post = (HttpPost) request;
         HttpEntity entity = post.getEntity();
-        String entities = CharStreams.toString(new InputStreamReader(entity.getContent(), Charsets.UTF_8));
+        String entities =
+            CharStreams.toString(new InputStreamReader(entity.getContent(), Charsets.UTF_8));
         assertThat(entities).contains(USERNAME);
         assertThat(entities).contains(PASSWORD);
     }
 
     @Test
-    public void doesNotExtractResult() throws Exception
-    {
+    public void doesNotExtractResult() throws Exception {
         assertThat(step.isExtractResult()).isTrue();
     }
 }
