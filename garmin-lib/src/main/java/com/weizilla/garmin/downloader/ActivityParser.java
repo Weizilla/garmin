@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weizilla.garmin.entity.Activity;
+import com.weizilla.garmin.entity.ImmutableActivity;
 import tec.uom.se.quantity.Quantities;
 
 import javax.inject.Singleton;
@@ -25,7 +26,6 @@ import java.util.stream.StreamSupport;
 public class ActivityParser
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final double MILES_TO_KM = 1.60934;
 
     static
     {
@@ -74,6 +74,12 @@ public class ActivityParser
         ZoneId startZoneId = ZoneId.of(jsonNode.at("/activitySummary/BeginTimestamp/uom").asText());
         LocalDateTime start = LocalDateTime.ofInstant(startInstant, startZoneId);
 
-        return new Activity(activityId, type, duration, start, distance);
+        return ImmutableActivity.builder()
+            .id(activityId)
+            .type(type)
+            .start(start)
+            .duration(duration)
+            .distance(distance)
+            .build();
     }
 }

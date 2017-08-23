@@ -1,12 +1,14 @@
 package com.weizilla.garmin.downloader;
 
 import com.weizilla.garmin.entity.Activity;
+import com.weizilla.garmin.entity.ImmutableActivity;
 import com.weizilla.garmin.fetcher.ActivityFetcher;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import systems.uom.common.USCustomary;
 import tec.uom.se.quantity.Quantities;
 
@@ -20,9 +22,11 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ActivityDownloaderTest
 {
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+
     private static final String JSON = "{}";
     @Mock
     private ActivityFetcher fetcher;
@@ -47,8 +51,13 @@ public class ActivityDownloaderTest
     @Test
     public void returnsParsedActivities() throws Exception
     {
-        Activity activity = new Activity(1, "TYPE", Duration.ofDays(1), LocalDateTime.now(),
-            Quantities.getQuantity(1, USCustomary.MILE));
+        Activity activity = ImmutableActivity.builder()
+            .id(1)
+            .type("TYPE")
+            .duration(Duration.ofDays(1))
+            .start(LocalDateTime.now())
+            .distance(Quantities.getQuantity(1, USCustomary.MILE))
+            .build();
         List<Activity> activities = Collections.singletonList(activity);
         when(parser.parse(anyString())).thenReturn(activities);
 
