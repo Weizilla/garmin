@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weizilla.garmin.entity.Activity;
 import com.weizilla.garmin.entity.ImmutableActivity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tec.uom.se.quantity.Quantities;
 
 import javax.inject.Singleton;
@@ -18,12 +20,14 @@ import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Singleton
 public class ActivityParser {
+    private static final Logger logger = LoggerFactory.getLogger(ActivityParser.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     static {
@@ -44,6 +48,8 @@ public class ActivityParser {
         return toStream(activities)
             .map(n -> n.get("activity"))
             .map(ActivityParser::parseActivity)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
             .collect(Collectors.toList());
     }
 
@@ -52,27 +58,40 @@ public class ActivityParser {
         return StreamSupport.stream(iterable.spliterator(), false);
     }
 
-    private static Activity parseActivity(JsonNode jsonNode) {
-        long activityId = jsonNode.at("/activityId").asLong();
-        String type = jsonNode.at("/activityType/key").asText();
+    private static Optional<Activity> parseActivity(JsonNode jsonNode) {
+        Long activityId = null;
+        Activity activity = null;
+        try {
+            activityId = jsonNode.at("/activityId").asLong();
+            String type = jsonNode.at("/activityType/key").asText();
 
-        String distanceStr = jsonNode.at("/activitySummary/SumDistance/withUnitAbbr").asText();
-        Quantity<Length> distance = Quantities.getQuantity(distanceStr).asType(Length.class);
+            String distanceStr = jsonNode.at("/activitySummary/SumDistance/withUnitAbbr").asText();
+            Quantity<Length> distance = parseDistance(distanceStr);
 
-        int seconds = jsonNode.at("/activitySummary/SumDuration/value").asInt();
-        Duration duration = Duration.ofSeconds(seconds);
+            int seconds = jsonNode.at("/activitySummary/SumDuration/value").asInt();
+            Duration duration = Duration.ofSeconds(seconds);
 
-        String startStamp = jsonNode.at("/activitySummary/BeginTimestamp/value").asText();
-        Instant startInstant = Instant.parse(startStamp);
-        ZoneId startZoneId = ZoneId.of(jsonNode.at("/activitySummary/BeginTimestamp/uom").asText());
-        LocalDateTime start = LocalDateTime.ofInstant(startInstant, startZoneId);
+            String startStamp = jsonNode.at("/activitySummary/BeginTimestamp/value").asText();
+            Instant startInstant = Instant.parse(startStamp);
+            ZoneId startZoneId =
+                ZoneId.of(jsonNode.at("/activitySummary/BeginTimestamp/uom").asText());
+            LocalDateTime start = LocalDateTime.ofInstant(startInstant, startZoneId);
 
-        return ImmutableActivity.builder()
-            .id(activityId)
-            .type(type)
-            .start(start)
-            .duration(duration)
-            .distance(distance)
-            .build();
+            activity = ImmutableActivity.builder()
+                .id(activityId)
+                .type(type)
+                .start(start)
+                .duration(duration)
+                .distance(distance)
+                .build();
+        } catch (Exception e) {
+            logger.error("Error parsing activity {}: {}. Json: {}", activityId, e.getMessage(), jsonNode, e);
+        }
+        return Optional.ofNullable(activity);
+    }
+
+    protected static Quantity<Length> parseDistance(String distance) {
+        String cleaned = distance.replace(",", "");
+        return Quantities.getQuantity(cleaned).asType(Length.class);
     }
 }

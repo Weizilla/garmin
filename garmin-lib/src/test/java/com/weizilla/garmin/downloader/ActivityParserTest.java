@@ -46,6 +46,14 @@ public class ActivityParserTest {
     }
 
     @Test
+    public void parsesVariousFormats() throws Exception {
+        ActivityParser.parseDistance("2,300 m");
+        ActivityParser.parseDistance("2.3 km");
+        ActivityParser.parseDistance("2.3 mi");
+        ActivityParser.parseDistance("2.3 yd");
+    }
+
+    @Test
     public void returnsEmptyListForNullOrEmptyInput() throws Exception {
         assertThat(parser.parse("")).isEmpty();
         assertThat(parser.parse("         ")).isEmpty();
