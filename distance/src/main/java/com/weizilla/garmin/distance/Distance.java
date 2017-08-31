@@ -10,8 +10,9 @@ public class Distance {
     public static final double MILE_TO_METER = 1609.34;
     public static final double YARD_TO_METER = 0.9144;
     public static final double FEET_TO_METER = 0.3048;
-    private static final String PARSE_REGEX = "([\\d\\.\\,]+)\\s*([\\w]+)";
+    private static final String PARSE_REGEX = "([\\d.,]+)\\s*([\\w]+)";
     private static final Pattern PARSE_PATTERN = Pattern.compile(PARSE_REGEX, CASE_INSENSITIVE);
+    private static final Pattern REMOVE_COMMA = Pattern.compile(",", Pattern.LITERAL);
     private final long distanceMeter;
 
     private Distance(double distanceMeter) {
@@ -56,14 +57,34 @@ public class Distance {
     private static double parseValue(String text) {
         double value;
         try {
-            value = Double.valueOf(text.replace(",", ""));
+            value = Double.valueOf(REMOVE_COMMA.matcher(text).replaceAll(""));
         } catch (NumberFormatException e) {
             throw new DistanceParseException("Unable to parse value for distance: " + text, e);
         }
         return value;
     }
 
-    public double getDistanceMeter() {
+    public Distance plus(Distance distance) {
+        return new Distance(distanceMeter + distance.distanceMeter);
+    }
+
+    public Distance minus(Distance distance) {
+        return new Distance(distanceMeter - distance.distanceMeter);
+    }
+
+    public Distance multipliedBy(double multiplicand) {
+        return new Distance(distanceMeter * multiplicand);
+    }
+
+    public Distance dividedBy(double divisor) {
+        return new Distance(distanceMeter / divisor);
+    }
+
+    public double dividedBy(Distance divisor) {
+        return (double) distanceMeter / divisor.distanceMeter;
+    }
+
+    public long getDistanceMeter() {
         return distanceMeter;
     }
 

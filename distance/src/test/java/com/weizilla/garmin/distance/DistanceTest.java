@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DistanceTest {
     @Test
     public void createsWithMeter() throws Exception {
-        double meter = 100;
+        long meter = 100;
         Distance distance = Distance.ofMeters(meter);
         assertThat(distance.getDistanceMeter()).isEqualTo(meter);
         distance = Distance.of(meter, METER);
@@ -21,8 +21,8 @@ public class DistanceTest {
 
     @Test
     public void createsWithKilometer() throws Exception {
-        double km = 100;
-        double m = 1000 * km;
+        long km = 100;
+        long m = 1000 * km;
         Distance distance = Distance.ofKilometers(km);
         assertThat(distance.getDistanceMeter()).isEqualTo(m);
         assertThat(distance).isEqualTo(Distance.ofMeters(m));
@@ -35,7 +35,7 @@ public class DistanceTest {
     @Test
     public void createsWithMile() throws Exception {
         double mi = 100;
-        double m = 160934;
+        long m = 160934;
         Distance distance = Distance.ofMiles(mi);
         assertThat(distance.getDistanceMeter()).isEqualTo(m);
         assertThat(distance).isEqualTo(Distance.ofMeters(m));
@@ -48,7 +48,7 @@ public class DistanceTest {
     @Test
     public void createsWithYards() throws Exception {
         double yd = 100;
-        double m = 91;
+        long m = 91;
         Distance distance = Distance.ofYards(yd);
         assertThat(distance.getDistanceMeter()).isEqualTo(m);
         assertThat(distance).isEqualTo(Distance.ofMeters(m));
@@ -61,7 +61,7 @@ public class DistanceTest {
     @Test
     public void createsWithFeet() throws Exception {
         double ft = 100;
-        double m = 30;
+        long m = 30;
         Distance distance = Distance.ofFeet(ft);
         assertThat(distance.getDistanceMeter()).isEqualTo(m);
         assertThat(distance).isEqualTo(Distance.ofMeters(m));
@@ -80,6 +80,46 @@ public class DistanceTest {
         assertThat(roundTrip).isNotNull();
 
         assertThat(distance).isEqualTo(roundTrip);
+    }
+
+    @Test
+    public void addition() throws Exception {
+        Distance a = Distance.ofMeters(10);
+        Distance b = Distance.ofMeters(20);
+        Distance expected = Distance.ofMeters(30);
+        assertThat(a.plus(b)).isEqualTo(expected);
+    }
+
+    @Test
+    public void subtraction() throws Exception {
+        Distance a = Distance.ofMeters(30);
+        Distance b = Distance.ofMeters(20);
+        Distance expected = Distance.ofMeters(10);
+        assertThat(a.minus(b)).isEqualTo(expected);
+    }
+
+    @Test
+    public void multiplication() throws Exception {
+        Distance a = Distance.ofMeters(10);
+        double b = 2.5;
+        Distance expected = Distance.ofMeters(25);
+        assertThat(a.multipliedBy(b)).isEqualTo(expected);
+    }
+
+    @Test
+    public void divisionByDecimal() throws Exception {
+        Distance a = Distance.ofMeters(10);
+        double b = 2;
+        Distance expected = Distance.ofMeters(5);
+        assertThat(a.dividedBy(b)).isEqualTo(expected);
+    }
+
+    @Test
+    public void divisionByDistance() throws Exception {
+        Distance a = Distance.ofMeters(10);
+        Distance b = Distance.ofMeters(20);
+        double expected = 0.5;
+        assertThat(a.dividedBy(b)).isEqualTo(expected);
     }
 
     @Test(expected = DistanceParseException.class)
