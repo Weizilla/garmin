@@ -1,21 +1,17 @@
 package com.weizilla.garmin.downloader;
 
+import com.weizilla.distance.Distance;
 import com.weizilla.garmin.entity.Activity;
 import com.weizilla.test.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
-import tec.uom.se.ComparableQuantity;
-import tec.uom.se.quantity.Quantities;
 
-import javax.measure.quantity.Length;
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static systems.uom.common.USCustomary.MILE;
 
 public class ActivityParserTest {
     private ActivityParser parser;
@@ -37,8 +33,7 @@ public class ActivityParserTest {
         assertThat(activity.getType()).isEqualTo("running");
         assertThat(activity.getDuration()).isEqualTo(Duration.ofSeconds(1527));
 
-        ComparableQuantity<Length> distance =
-            Quantities.getQuantity(BigDecimal.valueOf(3.12), MILE);
+        Distance distance = Distance.ofMiles(3.12);
         assertThat(activity.getDistance()).isEqualTo(distance);
 
         LocalDateTime start = LocalDateTime.of(2016, Month.AUGUST, 3, 6, 22, 25);
@@ -47,10 +42,10 @@ public class ActivityParserTest {
 
     @Test
     public void parsesVariousFormats() throws Exception {
-        ActivityParser.parseDistance("2,300 m");
-        ActivityParser.parseDistance("2.3 km");
-        ActivityParser.parseDistance("2.3 mi");
-        ActivityParser.parseDistance("2.3 yd");
+        Distance.parse("2,300 m");
+        Distance.parse("2.3 km");
+        Distance.parse("2.3 mi");
+        Distance.parse("2.3 yd");
     }
 
     @Test

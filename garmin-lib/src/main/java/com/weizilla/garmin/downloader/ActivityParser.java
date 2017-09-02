@@ -3,15 +3,13 @@ package com.weizilla.garmin.downloader;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.weizilla.distance.Distance;
 import com.weizilla.garmin.entity.Activity;
 import com.weizilla.garmin.entity.ImmutableActivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tec.uom.se.quantity.Quantities;
 
 import javax.inject.Singleton;
-import javax.measure.Quantity;
-import javax.measure.quantity.Length;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -66,7 +64,7 @@ public class ActivityParser {
             String type = jsonNode.at("/activityType/key").asText();
 
             String distanceStr = jsonNode.at("/activitySummary/SumDistance/withUnitAbbr").asText();
-            Quantity<Length> distance = parseDistance(distanceStr);
+            Distance distance = Distance.parse(distanceStr);
 
             int seconds = jsonNode.at("/activitySummary/SumDuration/value").asInt();
             Duration duration = Duration.ofSeconds(seconds);
@@ -88,10 +86,5 @@ public class ActivityParser {
             logger.error("Error parsing activity {}: {}. Json: {}", activityId, e.getMessage(), jsonNode, e);
         }
         return Optional.ofNullable(activity);
-    }
-
-    protected static Quantity<Length> parseDistance(String distance) {
-        String cleaned = distance.replace(",", "");
-        return Quantities.getQuantity(cleaned).asType(Length.class);
     }
 }

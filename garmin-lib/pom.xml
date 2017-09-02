@@ -45,20 +45,12 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.measure</groupId>
-            <artifactId>unit-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>systems.uom</groupId>
-            <artifactId>systems-common-java8</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.cfg4j</groupId>
-            <artifactId>cfg4j-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.immutables</groupId>
             <artifactId>value</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Weizilla</groupId>
+            <artifactId>distance</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

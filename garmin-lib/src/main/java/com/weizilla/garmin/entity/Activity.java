@@ -2,11 +2,10 @@ package com.weizilla.garmin.entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.weizilla.distance.Distance;
 import org.immutables.value.Value.Derived;
 import org.immutables.value.Value.Immutable;
 
-import javax.measure.Quantity;
-import javax.measure.quantity.Length;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,5 +27,5 @@ public interface Activity {
 
     Duration getDuration();
 
-    Quantity<Length> getDistance();
+    Distance getDistance();
 }

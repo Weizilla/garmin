@@ -1,5 +1,6 @@
 package com.weizilla.garmin.downloader;
 
+import com.weizilla.distance.Distance;
 import com.weizilla.garmin.entity.Activity;
 import com.weizilla.garmin.entity.ImmutableActivity;
 import com.weizilla.garmin.fetcher.ActivityFetcher;
@@ -9,8 +10,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import systems.uom.common.USCustomary;
-import tec.uom.se.quantity.Quantities;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -52,7 +51,7 @@ public class ActivityDownloaderTest {
             .type("TYPE")
             .duration(Duration.ofDays(1))
             .start(LocalDateTime.now())
-            .distance(Quantities.getQuantity(1, USCustomary.MILE))
+            .distance(Distance.ofMiles(1))
             .build();
         List<Activity> activities = Collections.singletonList(activity);
         when(parser.parse(anyString())).thenReturn(activities);

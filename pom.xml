@@ -7,7 +7,6 @@
     <artifactId>garmin</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>distance</module>
         <module>garmin-lib</module>
         <module>garmin-app</module>
     </modules>
@@ -65,24 +64,14 @@
                 <version>2.8.8</version>
             </dependency>
             <dependency>
-                <groupId>javax.measure</groupId>
-                <artifactId>unit-api</artifactId>
-                <version>1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>systems.uom</groupId>
-                <artifactId>systems-common-java8</artifactId>
-                <version>0.7</version>
-            </dependency>
-            <dependency>
-                <groupId>org.cfg4j</groupId>
-                <artifactId>cfg4j-core</artifactId>
-                <version>4.4.0</version>
-            </dependency>
-            <dependency>
                 <groupId>org.immutables</groupId>
                 <artifactId>value</artifactId>
                 <version>2.5.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.Weizilla</groupId>
+                <artifactId>distance</artifactId>
+                <version>1ea3548570</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
@@ -133,4 +122,11 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 </project>
