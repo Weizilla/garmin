@@ -71,7 +71,7 @@
             <dependency>
                 <groupId>com.github.Weizilla</groupId>
                 <artifactId>distance</artifactId>
-                <version>1ea3548570</version>
+                <version>cdea5d7e6b</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
