@@ -70,10 +70,10 @@ public class ActivityDownloaderIntTest {
             .willReturn(aResponse()
                 .withHeader("Content-Type", "text/html; charset=utf-8")
                 .withBody(readResource("int-test/login-response.html"))));
-        stubFor(get(urlMatching("/post-auth/login.*"))
+        stubFor(get(urlMatching(FollowTicketStep.POST_AUTH_URL + ".*"))
             .willReturn(aResponse()
                 .withHeader("location", "http://localhost:" + PORT + "/redirect")));
-        stubFor(get(urlMatching("/proxy/activity-search-service-1.2.*"))
+        stubFor(get(urlMatching(GetActivitiesStep.GET_ACTIVITIES_URL + ".*"))
             .willReturn(aResponse()
                 .withHeader("Content-Type", "application/json")
                 .withBody(readResource("int-test/get-activities-response.json"))));

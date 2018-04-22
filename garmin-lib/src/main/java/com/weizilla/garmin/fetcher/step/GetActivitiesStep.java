@@ -12,8 +12,8 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class GetActivitiesStep extends Step {
-    protected static final String GET_ACTIVITIES_URL =
-        "/proxy/activity-search-service-1.2/json/activities";
+    public static final String GET_ACTIVITIES_URL =
+        "/proxy/activitylist-service/activities/search/activities/";
     private final UrlBases urlBases;
 
     @Inject

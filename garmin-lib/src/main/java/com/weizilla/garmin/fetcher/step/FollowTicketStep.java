@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 @Singleton
 public class FollowTicketStep extends Step {
-    private static final String POST_AUTH_URL = "/post-auth/login?";
+    public static final String POST_AUTH_URL = "/post-auth/login?";
     private final UrlBases urlBases;
 
     @Inject
