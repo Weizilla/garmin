@@ -29,14 +29,12 @@ public class ActivityParserTest {
 
         Activity activity = activities.get(0);
 
-        assertThat(activity.getId()).isEqualTo(1286232939);
-        assertThat(activity.getType()).isEqualTo("running");
-        assertThat(activity.getDuration()).isEqualTo(Duration.ofSeconds(1527));
+        assertThat(activity.getId()).isEqualTo(1493610294);
+        assertThat(activity.getType()).isEqualTo("cycling");
+        assertThat(activity.getDuration()).isEqualTo(Duration.ofSeconds(5498));
+        assertThat(activity.getDistance()).isEqualTo(Distance.ofMeters(38208.37));
 
-        Distance distance = Distance.ofMiles(3.12);
-        assertThat(activity.getDistance()).isEqualTo(distance);
-
-        LocalDateTime start = LocalDateTime.of(2016, Month.AUGUST, 3, 6, 22, 25);
+        LocalDateTime start = LocalDateTime.of(2016, Month.DECEMBER, 23, 9, 1, 12);
         assertThat(activity.getStart()).isEqualTo(start);
     }
 
