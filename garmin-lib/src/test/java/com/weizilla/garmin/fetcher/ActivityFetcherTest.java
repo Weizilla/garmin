@@ -44,17 +44,13 @@ public class ActivityFetcherTest {
 
     @Before
     public void setUp() throws Exception {
-        when(ltLookupStep.create(any())).thenReturn(request);
-        when(ltLookupStep.isExtractResult()).thenReturn(true);
+        when(ltLookupStep.create()).thenReturn(request);
 
-        when(loginStep.create(any())).thenReturn(request);
-        when(loginStep.isExtractResult()).thenReturn(true);
+        when(loginStep.create()).thenReturn(request);
 
-        when(getActivitiesStep.create(any())).thenReturn(request);
-        when(getActivitiesStep.isExtractResult()).thenReturn(true);
+        when(getActivitiesStep.create()).thenReturn(request);
 
         when(followTicketStep.create(any())).thenReturn(request);
-        when(followTicketStep.isExtractResult()).thenReturn(true);
 
         fetcher = new ActivityFetcher(new HttpClientFactoryStub(), ltLookupStep,
             loginStep,
@@ -91,10 +87,10 @@ public class ActivityFetcherTest {
             .thenReturn(httpResponse1, httpResponse2, httpResponse3, httpResponse4);
 
         String result = fetcher.fetch();
-        verify(ltLookupStep).create(null);
-        verify(loginStep).create(response1);
+        verify(ltLookupStep).create();
+        verify(loginStep).create();
         verify(followTicketStep).create(response2);
-        verify(getActivitiesStep).create(response3);
+        verify(getActivitiesStep).create();
         assertThat(result).isEqualTo(response4);
     }
 

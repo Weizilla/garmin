@@ -36,10 +36,8 @@ public class LoginStep extends Step {
         this.credentials = credentials;
     }
 
-    @Override
-    public HttpUriRequest create(String prevResult) throws IOException {
-        List<NameValuePair> data = new ArrayList<>();
-        data.addAll(PARAMS);
+    public HttpUriRequest create() {
+        List<NameValuePair> data = new ArrayList<>(PARAMS);
         data.add(new BasicNameValuePair("username", credentials.getUsername()));
         data.add(new BasicNameValuePair("password", credentials.getPassword()));
 
@@ -48,12 +46,6 @@ public class LoginStep extends Step {
         return request;
     }
 
-    @Override
-    public boolean isExtractResult() {
-        return true;
-    }
-
-    @Override
     public String getStepName() {
         return "Login";
     }

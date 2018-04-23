@@ -20,17 +20,10 @@ public class LtLookupStep extends Step {
         this.urlBases = urlBases;
     }
 
-    @Override
-    public HttpUriRequest create(String prevResult) throws IOException {
+    public HttpUriRequest create() {
         return new HttpGet(urlBases.getLtLookup() + SSO_URL);
     }
 
-    @Override
-    public boolean isExtractResult() {
-        return true;
-    }
-
-    @Override
     public String getStepName() {
         return "LT Lookup";
     }

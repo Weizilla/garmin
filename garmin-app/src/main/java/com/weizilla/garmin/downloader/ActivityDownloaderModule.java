@@ -21,7 +21,7 @@ public class ActivityDownloaderModule extends AbstractModule {
         bases.setLtLookup("https://sso.garmin.com");
 
         logConfig = new LogConfig();
-        logConfig.setResult(false);
+        logConfig.setResult(true);
         logConfig.setUrl(true);
 
         credentials = new Credentials();

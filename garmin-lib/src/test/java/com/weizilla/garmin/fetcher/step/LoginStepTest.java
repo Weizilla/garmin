@@ -29,17 +29,11 @@ public class LoginStepTest {
 
     @Test
     public void createsHttpPostRequestWithUsernameAndPassword() throws Exception {
-        HttpUriRequest request = step.create("<input name='lt' value='a1b2c3'/>\"");
+        HttpUriRequest request = step.create();
         HttpPost post = (HttpPost) request;
         HttpEntity entity = post.getEntity();
-        String entities =
-            CharStreams.toString(new InputStreamReader(entity.getContent(), Charsets.UTF_8));
+        String entities = CharStreams.toString(new InputStreamReader(entity.getContent(), Charsets.UTF_8));
         assertThat(entities).contains(USERNAME);
         assertThat(entities).contains(PASSWORD);
-    }
-
-    @Test
-    public void doesNotExtractResult() throws Exception {
-        assertThat(step.isExtractResult()).isTrue();
     }
 }

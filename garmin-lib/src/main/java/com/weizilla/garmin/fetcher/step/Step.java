@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class Step {
     protected static final String SSO_URL;
@@ -22,12 +23,6 @@ public abstract class Step {
         params.add(new BasicNameValuePair("gauthHost", "https://sso.garmin.com/sso"));
         SSO_URL = "/sso/login?" + encode(params);
     }
-
-    public abstract HttpUriRequest create(String prevResult) throws IOException;
-
-    public abstract boolean isExtractResult();
-
-    public abstract String getStepName();
 
     protected static String encode(String key, String value) {
         return encode(Collections.singletonList(new BasicNameValuePair(key, value)));

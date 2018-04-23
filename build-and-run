@@ -1,1 +1,1 @@
-mvn clean install && ./run "$*"
+mvn clean install -DskipTests=true && ./run "$*"

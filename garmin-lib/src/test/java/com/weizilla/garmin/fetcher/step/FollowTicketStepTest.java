@@ -27,9 +27,4 @@ public class FollowTicketStepTest {
     public void throwsExceptionIfNoTicketFound() throws Exception {
         step.create("RANDOM INPUT");
     }
-
-    @Test
-    public void doesNotExtractResult() throws Exception {
-        assertThat(step.isExtractResult()).isFalse();
-    }
 }

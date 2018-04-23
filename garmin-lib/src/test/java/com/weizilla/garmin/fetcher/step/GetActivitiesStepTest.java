@@ -17,12 +17,7 @@ public class GetActivitiesStepTest {
 
     @Test
     public void returnsHttpRequest() throws Exception {
-        HttpUriRequest request = step.create(null);
+        HttpUriRequest request = step.create();
         assertThat(request.getURI().toString()).contains(GetActivitiesStep.GET_ACTIVITIES_URL);
-    }
-
-    @Test
-    public void extractsResult() throws Exception {
-        assertThat(step.isExtractResult()).isTrue();
     }
 }
