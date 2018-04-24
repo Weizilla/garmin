@@ -56,11 +56,11 @@ public class ActivityDownloaderIntTest {
         stubFor(get(urlMatching("/sso/login.*"))
             .willReturn(aResponse()
                 .withHeader("Content-Type", "text/html; charset=utf-8")
-                .withBody(readResource("int-test/lt-lookup-response.html"))));
+                .withBody(readResource("int-test/get-login-response.html"))));
         stubFor(post(urlMatching("/sso/login.*"))
             .willReturn(aResponse()
                 .withHeader("Content-Type", "text/html; charset=utf-8")
-                .withBody(readResource("int-test/login-response.html"))));
+                .withBody(readResource("int-test/submit-login-response.html"))));
         stubFor(get(urlMatching(".*" + POST_AUTH_URL + "\\?ticket=.*"))
             .willReturn(aResponse()
                 .withHeader("location", "http://localhost:" + PORT + "/redirect")));

@@ -94,20 +94,20 @@ public class ActivityFetcher {
 
     public String fetch() throws Exception {
         try (CloseableHttpClient client = clientFactory.build()) {
-            executeLtLookup(client);
-            String ticket = executeLogin(client);
+            executeGetLoginLookup(client);
+            String ticket = executeSubmitLogin(client);
             executeFollowTicket(ticket, client);
             return executeGetActivities(client);
         }
     }
 
-    private void executeLtLookup(CloseableHttpClient httpClient) throws Exception {
+    private void executeGetLoginLookup(CloseableHttpClient httpClient) throws Exception {
         URI uri = new URIBuilder(urlBases.getLtLookup())
             .setPath(LOGIN_PATH)
             .addParameters(LOGIN_PARAMS)
             .build();
         HttpUriRequest request = new HttpGet(uri);
-        logRequest("Lt lookup", request);
+        logRequest("Get login", request);
         Thread.sleep(rateLimit);
         try (CloseableHttpResponse response = httpClient.execute(request)) {
             String result = EntityUtils.toString(response.getEntity());
@@ -115,7 +115,7 @@ public class ActivityFetcher {
         }
     }
 
-    private String executeLogin(CloseableHttpClient httpClient) throws Exception {
+    private String executeSubmitLogin(CloseableHttpClient httpClient) throws Exception {
         List<NameValuePair> loginData = new ArrayList<>(LOGIN_DATA);
         loginData.add(new BasicNameValuePair("username", credentials.getUsername()));
         loginData.add(new BasicNameValuePair("password", credentials.getPassword()));
@@ -129,7 +129,7 @@ public class ActivityFetcher {
         request.addHeader(HttpHeaders.REFRESH, "0");
         request.setEntity(new UrlEncodedFormEntity(loginData, StandardCharsets.UTF_8));
 
-        logRequest("Login", request);
+        logRequest("Submit login", request);
         Thread.sleep(rateLimit);
         try (CloseableHttpResponse response = httpClient.execute(request)) {
             String result = EntityUtils.toString(response.getEntity());
