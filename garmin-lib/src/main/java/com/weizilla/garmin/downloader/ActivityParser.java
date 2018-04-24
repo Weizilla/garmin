@@ -1,5 +1,6 @@
 package com.weizilla.garmin.downloader;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,13 +39,11 @@ public class ActivityParser {
         }
 
         JsonNode jsonNode = MAPPER.readTree(json);
-        Iterator<JsonNode> activities = jsonNode.at("/results/activities").elements();
-        return parseActivities(activities);
+        return parseActivities(jsonNode.elements());
     }
 
     private static List<Activity> parseActivities(Iterator<JsonNode> activities) {
         return toStream(activities)
-            .map(n -> n.get("activity"))
             .map(ActivityParser::parseActivity)
             .filter(Optional::isPresent)
             .map(Optional::get)
@@ -61,19 +60,11 @@ public class ActivityParser {
         Activity activity = null;
         try {
             activityId = jsonNode.at("/activityId").asLong();
-            String type = jsonNode.at("/activityType/key").asText();
-
-            String distanceStr = jsonNode.at("/activitySummary/SumDistance/withUnitAbbr").asText();
-            Distance distance = Distance.parse(distanceStr);
-
-            int seconds = jsonNode.at("/activitySummary/SumDuration/value").asInt();
-            Duration duration = Duration.ofSeconds(seconds);
-
-            String startStamp = jsonNode.at("/activitySummary/BeginTimestamp/value").asText();
-            Instant startInstant = Instant.parse(startStamp);
-            ZoneId startZoneId =
-                ZoneId.of(jsonNode.at("/activitySummary/BeginTimestamp/uom").asText());
-            LocalDateTime start = LocalDateTime.ofInstant(startInstant, startZoneId);
+            String type = jsonNode.at("/activityType/typeKey").asText();
+            Distance distance = Distance.ofMeters(jsonNode.at("/distance").floatValue());
+            Duration duration = Duration.ofSeconds(jsonNode.at("/duration").asInt());
+            String startStr = jsonNode.at("/startTimeLocal").asText().replace(" ", "T");
+            LocalDateTime start = LocalDateTime.parse(startStr);
 
             activity = ImmutableActivity.builder()
                 .id(activityId)

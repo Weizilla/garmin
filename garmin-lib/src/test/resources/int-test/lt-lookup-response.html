@@ -1,1112 +1,213 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<!-- flowExecutionKey: [e1s1] -->
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <meta name="viewport" content="width=device-width" />
-        <title>GARMIN Authentication Application</title>
-        <link href="/sso/css/GAuth.css?20151102" rel="stylesheet" type="text/css" media="all" />
-        <script type="text/javascript" src="/sso/js/jquery/1.4.2/jquery.min.js"></script>
-        <script type="text/javascript">jQuery.noConflict();</script>
-        <script type="text/javascript" src="/sso/js/jquery-validate/jquery.validate.js?20160520"></script>
-        <script type="text/javascript" src="/sso/js/jsUtils.js?20121003"></script>
-        <script type="text/javascript" src="/sso/js/json2.js"></script>
-        <script type="text/javascript" src="/sso/js/consoleUtils.js?20120711"></script>
-        <script type="text/javascript" src="/sso/js/postmessage.js?20120711"></script>
-        <script type="text/javascript" src="/sso/js/popupWindow.js"></script>
-        <script type="text/javascript" src="/sso/js/termsOfUse.js"></script>
-        <script type="text/javascript" src="https://static.garmincdn.com/com.garmin/ui/js/garmin.host.v1.0-min.js"></script>
-    	<!-- Socialize JS -->
-        <script type="text/javascript" src="https://cdns.gigya.com/js/gigya.js?apiKey=2_R3ZGY8Bqlwwk3_63knoD9wA_m-Y19mAgW61bF_s5k9gymYnMEAtMrJiF5MjF-U7B"></script>
-        <script type="text/javascript">
-            var parent_url      = '';
-            // Gigya callback to SocialSignInController for brand new social network users redirects to this page
-            // to popup Create or Link Social Account page, but has a possibly mangled source parameter
-            // where "?" is set as "<QM>", so translate it back to "?" here.
-            parent_url = parent_url.replace('<QM>', '?');
-            var parent_scheme   = parent_url.substring(0, parent_url.indexOf("://"));
-            var parent_hostname = parent_url.substring(parent_scheme.length + 3, parent_url.length);
-            if (parent_hostname.indexOf("/") != -1) {
-                parent_hostname = parent_hostname.substring(0, parent_hostname.indexOf("/"));
-            }
-            var parentHost      = parent_scheme + "://" + parent_hostname;
-            var createAccountConfigURL = '\/createNewAccount?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&clientId=GarminConnect&consumeServiceTicket=false';
-            var socialConfigURL        = '\/sso\/socialSignIn?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&clientId=GarminConnect&consumeServiceTicket=false&flowExecutionKey=e1s1';
-            var embedWidget            = false;
-            consoleInfo('casLoginView.jsp showState: [], result: [], social_enabled: [true], createAccountShown: []');
-            consoleInfo('casLoginView.jsp embedWidget: [false], createAccountConfigURL: [\/createNewAccount?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&clientId=GarminConnect&consumeServiceTicket=false], socialEnabled: [true], gigyaSupported: [true], socialConfigURL(): [\/sso\/socialSignIn?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&clientId=GarminConnect&consumeServiceTicket=false&flowExecutionKey=e1s1]');
-            // Gigya callback is confused by encoded question marks in URL parameters,
-            // so carry them around as "<QM>" and translate them back in the SocialSignInController.
-            // So here we replace every encoded question mark with the encoded version of "<QM>".
-            socialConfigURL = socialConfigURL.replace("%3F", "%3CQM%3E");
-            function send(msg) {
-                consoleInfo('casLoginView.jsp send(): Calling XD.postMessage(msg:[' + JSON.stringify(msg) + '], target_url:[' + parent_url + '])...');
-                XD.postMessage(msg, parent_url, parent);
-                return false;
-            }
-            function navigate(url){
-                document.location = url + "#" + parent_url;
-            }
-            function sendEvent(result){
-                switch(result) {
-                    case 'ACCOUNT_LOCKED':
-                        send({'status':'ACCOUNT_LOCKED'});
-                        return true;
-                    case 'ACCOUNT_DISABLED':
-                        send({'status':'ACCOUNT_DISABLED'});
-                        return true;
-                    case 'ACCOUNT_PROBLEM':
-                        send({'status':'ACCOUNT_PROBLEM'});
-                        return true;
-                    case 'FAIL':
-                        send({'status':'FAIL'});
-                        return true;
-                    case 'ERROR':
-                        send({'status':'ERROR'});
-                        return true;
-                    case 'REACTIVATE_ACCOUNT':
-                        send({'status':'REACTIVATE_ACCOUNT'});
-                        return true;
-                    default:
-                        consoleError('casLoginView.jsp sendEvent(): Unknown result [' + result + ']!!!]');
-                        return false;
-                }
-            }
-            function signInEmail() {
-                var newEmailAddress = jQuery("#newEmailAddress").val();
-                consoleInfo("casLoginView.jsp: signInEmail(): Setting login email \"" + newEmailAddress + "\"...");
-                jQuery("#signInWithDiffLink").click(); // Ensure the normal login form is shown.
-                jQuery("#username").val(newEmailAddress);
-                jQuery("#password").focus();
-            }
-            /*
-            Call verify account again to generate a new code
-             */
-             function resendVerificationCode(){	
-                 consoleInfo("casLoginView.jsp: resendVerificationCode(): Entering function.");
-                 url = '/sso/verifyAccount?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&clientId=GarminConnect&consumeServiceTicket=false&requestCode=true&fromPage=casLoginView';
-                 var data = "password=&username=&email=&phoneNumber=&customerGUID=";
-                 var xhr = new XMLHttpRequest();
-                 xhr.open("POST", url);
-                 xhr.setRequestHeader("cache-control", "no-cache");
-                 xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded");
-                 xhr.send(data);
-                 // just in case lets hide all of the alerts before showing the code sent message
-                 jQuery('#verify-account-form-alert').children().hide();
-                 jQuery('#verify-account-form-alert').show();
-                 jQuery('#newCodeRequested').show();
-                 consoleInfo('casLoginView.jsp: resendVerificationCode(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                 send({'gauthHeight':jQuery("#GAuth-component").height()});
-             }
-            jQuery(document).ready( function(){
-                consoleInfo("casLoginView.jsp: setting form validation rules...");
-                jQuery(document).keypress(function(e) {
-                	if (e.keyCode == 13) {
-                		consoleInfo("'Enter' key detected - invoking jQuery('#login-form').validate().");
-                		jQuery("#login-form").valid();
-                	}
-                });
-                jQuery("#login-form").validate({
-                    errorElement: "span",
-                    rules: {
-                    	username: {
-                    		required: true, // set the username as required
-                    		email: false   // but we don't want to validate as email since it can also be a username
-                    	}
-                    }, 
-                    errorPlacement:function(error,element){
-                        var error_div;
-                        var other_error_div;
-                        consoleInfo('casLoginView.jsp login-form errorPlacement(): element[0].name [' + element[0].name + '], error.html() [' + error.html() + ']');
-                        if (element[0].name == 'username') {
-                            error_div = jQuery('#login-form-username-errors');
-                        } else {
-                            error_div = jQuery('#login-form-password-errors');
-                            other_error_div = jQuery('#login-form-username-errors');
-                        }
-                        element.removeClass("error");
-                        consoleInfo('casLoginView.jsp login-form errorPlacement(): error_div.html() [' + error_div.html() + ']');
-                        if (other_error_div) {
-                            consoleInfo('casLoginView.jsp login-form errorPlacement(): other_error_div.html() [' + other_error_div.html() + ']');
-                        }
-                        if (error.html() != '' && (!other_error_div || other_error_div.html() == '')) {
-                        	 if (error.html().indexOf('enter a valid email') == -1) { 
-	                            jQuery('div#login-state-default > form#login-form > div.form-alert > div').hide();
-	                            error_div.html(error.html());
-	                            error_div.addClass("attention");
-	                            consoleInfo('casLoginView.jsp login-form errorPlacement(): Showing [' + error_div[0].id + '] with [' + error_div.html() + ']');
-	                            error_div.show();
-	                            jQuery(".form-alert").show();
-                        	 }
-                                consoleInfo('casLoginView.jsp login-form errorPlacement(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                                send({'gauthHeight':jQuery("#GAuth-component").height()});
-                        } else {
-                            consoleInfo('casLoginView.jsp login-form errorPlacement(): Hiding [' + error_div[0].id + ']');
-                            error_div.html('');
-                            error_div.hide();
-                        }
-                    },
-                    invalidHandler: function(event, validator) {
-                    	var errors = validator.numberOfInvalids();
-                        if (errors && validator.errorList.length > 0) {
-                             validator.errorList[0].element.focus();
-                        }
-                    },
-                    success: function(span){
-                            consoleInfo('casLoginView.jsp login-form success(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                            send({'gauthHeight':jQuery("#GAuth-component").height()});
-                    },
-                    submitHandler: function(form){
-                        login_form_submitted = true;
-                        jQuery("#login-btn-signin").addClass("inactive");
-                        jQuery("#password").val(jQuery.trim(jQuery("#password").val()));
-                        jQuery("#username").val(jQuery.trim(jQuery("#username").val()));
-                        form.submit();
-                    }
-                });
-                jQuery("#reset-password-form").validate({
-                    errorElement: "span",
-                    errorPlacement:function(error,element){
-                        var error_div = jQuery('#reset-password-loginID-errors');
-                        consoleInfo('casLoginView.jsp reset-password-form errorPlacement(): element[0].name [' + element[0].name + '], error.html() [' + error.html() + '], error_div.html() [' + error_div.html() + ']');
-                        element.removeClass("error");
-                        if (error.html() != '') {
-                            jQuery('div#login-state-password > form#reset-password-form > div.form-alert > div').hide();
-                            error_div.html(error.html());
-                            error_div.addClass("attention");
-                            consoleInfo('casLoginView.jsp reset-password-form errorPlacement(): Showing [' + error_div[0].id + '] with [' + error_div.html() + ']');
-                            error_div.show();
-                            jQuery(".form-alert").show();
-                            jQuery("#reset-password-loginID").focus();
-                                consoleInfo('casLoginView.jsp reset-password-form errorPlacement(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                                send({'gauthHeight':jQuery("#GAuth-component").height()});
-                        } else {
-                            consoleInfo('casLoginView.jsp reset-password-form errorPlacement(): Hiding [' + error_div[0].id + ']');
-                            error_div.html('');
-                            error_div.hide();
-                        }
-                    },
-                    success: function(span){
-                            consoleInfo('casLoginView.jsp reset-password-form success(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                            send({'gauthHeight':jQuery("#GAuth-component").height()});
-                    },
-                    submitHandler: function(form){
-                        recover_password_form_submitted = true;
-                        jQuery("#login-btn-reset").addClass("inactive");
-                        form.submit();
-                    }
-                });
-                jQuery("#renew-password-form").validate({
-                    onkeyup: false,
-                    onfocusout: false,
-                    errorElement: "span",
-                    errorPlacement:function(error,element){
-                        var error_div;
-                        var other_error_div;
-                        consoleInfo('casLoginView.jsp renew-password-form errorPlacement(): element[0].id [' + element[0].id + ']');
-                        if (element[0].id == 'strengthenPassword') { // using id here to differentiate from change-password-form
-                            error_div = jQuery('#renew-password-form-newPassword-errors');
-                        } else {
-                            error_div = jQuery('#renew-password-form-confirmPassword-errors');
-                            other_error_div = jQuery('#renew-password-form-newPassword-errors');
-                        }
-                        element.removeClass("error");
-                        consoleInfo('casLoginView.jsp renew-password-form errorPlacement(): error.html() [' + error.html() + ']');
-                        consoleInfo('casLoginView.jsp renew-password-form errorPlacement(): error_div.html() [' + error_div.html() + ']');
-                        if (other_error_div) {
-                            consoleInfo('casLoginView.jsp renew-password-form errorPlacement(): other_error_div.html() [' + other_error_div.html() + ']');
-                        }
-                        if (error.html() != '' && (!other_error_div || other_error_div.html() == '')) {
-                            jQuery('div#login-state-renewpassword > form#renew-password-form > div.form-alert > div').hide();
-                            if (!other_error_div) {
-                                var confirm_password_div = jQuery('#renew-password-form-confirmPassword-errors');
-                                confirm_password_div.html('');
-                                confirm_password_div.hide();
-                            }
-                            error_div.html(error.html());
-                            error_div.addClass("attention");
-                            consoleInfo('casLoginView.jsp renew-password-form errorPlacement(): Showing [' + error_div[0].id + '] with [' + error_div.html() + ']');
-                            error_div.show();
-                            jQuery(".form-alert").show();
-                            if (element[0].id == 'strengthenPassword') {
-                                jQuery("#strengthenPassword").focus();
-                            } else {
-                                jQuery("#confirmStrengthenPassword").focus();
-                            }
-                                consoleInfo('casLoginView.jsp renew-password-form errorPlacement(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                                send({'gauthHeight':jQuery("#GAuth-component").height()});
-                        } else {
-                            consoleInfo('casLoginView.jsp renew-password-form errorPlacement(): Hiding [' + error_div[0].id + ']');
-                            error_div.html('');
-                            error_div.hide();
-                        }
-                    },
-                    success: function(span){
-                            consoleInfo('casLoginView.jsp renew-password-form success(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                            send({'gauthHeight':jQuery("#GAuth-component").height()});
-                    },
-                    submitHandler: function(form){
-                        renew_password_form_submitted = true;
-                        jQuery("#renew-password-submit").addClass("inactive");
-                        form.submit();
-                    }
-                });
-                jQuery("#change-password-form").validate({
-                    onkeyup: false,
-                    onfocusout: false,
-                    errorElement: "span",
-                    errorPlacement:function(error,element){
-                        var error_div;
-                        var other_error_div;
-                        consoleInfo('casLoginView.jsp change-password-form errorPlacement(): element[0].id [' + element[0].id + ']');
-                        if (element[0].id == 'newPassword') {
-                            error_div = jQuery('#change-password-form-newPassword-errors');
-                        } else {
-                            error_div = jQuery('#change-password-form-confirmPassword-errors');
-                            other_error_div = jQuery('#change-password-form-newPassword-errors');
-                        }
-                        element.removeClass("error");
-                        consoleInfo('casLoginView.jsp change-password-form errorPlacement(): error.html() [' + error.html() + ']');
-                        consoleInfo('casLoginView.jsp change-password-form errorPlacement(): error_div.html() [' + error_div.html() + ']');
-                        if (other_error_div) {
-                            consoleInfo('casLoginView.jsp change-password-form errorPlacement(): other_error_div.html() [' + other_error_div.html() + ']');
-                        }
-                        if (error.html() != '' && (!other_error_div || other_error_div.html() == '')) {
-                            jQuery('div#login-state-setpassword > form#change-password-form > div.form-alert > div').hide();
-                            if (!other_error_div) {
-                                var confirm_password_div = jQuery('#change-password-form-confirmPassword-errors');
-                                confirm_password_div.html('');
-                                confirm_password_div.hide();
-                            }
-                            error_div.html(error.html());
-                            error_div.addClass("attention");
-                            consoleInfo('casLoginView.jsp change-password-form errorPlacement(): Showing [' + error_div[0].id + '] with [' + error_div.html() + ']');
-                            error_div.show();
-                            jQuery(".form-alert").show();
-                            if (element[0].id == 'newPassword') {
-                                jQuery("#newPassword").focus();
-                            } else {
-                                jQuery("#confirmPassword").focus();
-                            }
-                                consoleInfo('casLoginView.jsp change-password-form errorPlacement(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                                send({'gauthHeight':jQuery("#GAuth-component").height()});
-                        } else {
-                            consoleInfo('casLoginView.jsp change-password-form errorPlacement(): Hiding [' + error_div[0].id + ']');
-                            error_div.html('');
-                            error_div.hide();
-                        }
-                    },
-                    success: function(span){
-                            consoleInfo('casLoginView.jsp change-password-form success(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                            send({'gauthHeight':jQuery("#GAuth-component").height()});
-                    },
-                    submitHandler: function(form){
-                        change_password_form_submitted = true;
-                        jQuery("#change-password-submit").addClass("inactive");
-                        form.submit();
-                    }
-                });
-                jQuery("#set-emailaddress-form").validate({
-                    onkeyup: false,
-                    errorElement: "span",
-                    errorPlacement:function(error,element){
-                        var elParent = element.parents(".formTextField");
-                        elParent.removeClass("attention loading information error success");
-                        var error_div;
-                        var other_error_div;
-                        consoleInfo('casLoginView.jsp set-emailaddress-form errorPlacement(): element[0].name [' + element[0].name + ']');
-                        if (element[0].name == 'newEmailAddress') {
-                            error_div = jQuery('#set-emailaddress-form-newEmailAddress-errors');
-                        } else {
-                            error_div = jQuery('#set-emailaddress-form-confirmEmailAddress-errors');
-                            other_error_div = jQuery('#set-emailaddress-form-newEmailAddress-errors');
-                        }
-                        element.removeClass("error");
-                        consoleInfo('casLoginView.jsp set-emailaddress-form errorPlacement(): error.html() [' + error.html() + ']');
-                        consoleInfo('casLoginView.jsp set-emailaddress-form errorPlacement(): error_div.html() [' + error_div.html() + ']');
-                        if (other_error_div) {
-                            consoleInfo('casLoginView.jsp set-emailaddress-form errorPlacement(): other_error_div.html() [' + other_error_div.html() + ']');
-                        }
-                        if (error.html() != '' && (!other_error_div || other_error_div.html() == '')) {
-                            jQuery('div#login-state-setemailaddress > form#set-emailaddress-form > div.form-alert > div').hide();
-                            if (!other_error_div) {
-                                var confirm_password_div = jQuery('#set-emailaddress-form-confirmEmailAddress-errors');
-                                confirm_password_div.html('');
-                                confirm_password_div.hide();
-                            }
-                            error_div.html(error.html());
-                            error_div.addClass("attention");
-                            consoleInfo('casLoginView.jsp set-emailaddress-form errorPlacement(): Showing [' + error_div[0].id + '] with [' + error_div.html() + ']');
-                            error_div.show();
-                            jQuery(".form-alert").show();
-                                consoleInfo('casLoginView.jsp set-emailaddress-form errorPlacement(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                                send({'gauthHeight':jQuery("#GAuth-component").height()});
-                        } else {
-                            consoleInfo('casLoginView.jsp set-emailaddress-form errorPlacement(): Hiding [' + error_div[0].id + ']');
-                            error_div.html('');
-                            error_div.hide();
-                        }
-                    },
-                    success: function(span){
-                            consoleInfo('casLoginView.jsp set-emailaddress-form success(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                            send({'gauthHeight':jQuery("#GAuth-component").height()});
-                    },
-                    submitHandler: function(form){
-                        set_email_address_form_submitted = true;
-                        jQuery("#set-emailaddress-submit").addClass("inactive");
-                        form.submit();
-                    }
-                });
-                jQuery("#set-displayname-form").validate({
-                    onkeyup: false,
-                    errorElement: "span",
-                    errorPlacement:function(error,element){
-                        var elParent = element.parents(".formTextField");
-                        elParent.removeClass("attention loading information error success");
-                        var error_div;
-                        consoleInfo('casLoginView.jsp set-displayname-form errorPlacement(): element[0].name [' + element[0].name + ']');
-                        error_div = jQuery('#set-displayname-form-newDisplayName-errors');
-                        element.removeClass("error");
-                        consoleInfo('casLoginView.jsp set-displayname-form errorPlacement(): error.html() [' + error.html() + ']');
-                        consoleInfo('casLoginView.jsp set-displayname-form errorPlacement(): error_div.html() [' + error_div.html() + ']');
-                        if (error.html() != '') {
-                            jQuery('div#login-state-setdisplayname > form#set-displayname-form > div.form-alert > div').hide();
-                            error_div.html(error.html());
-                            error_div.addClass("attention");
-                            consoleInfo('casLoginView.jsp set-displayname-form errorPlacement(): Showing [' + error_div[0].id + '] with [' + error_div.html() + ']');
-                            error_div.show();
-                            jQuery(".form-alert").show();
-                            jQuery("#newDisplayName").focus();
-                                consoleInfo('casLoginView.jsp set-displayname-form errorPlacement(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                                send({'gauthHeight':jQuery("#GAuth-component").height()});
-                        } else {
-                            consoleInfo('casLoginView.jsp set-displayname-form errorPlacement(): Hiding [' + error_div[0].id + ']');
-                            error_div.html('');
-                            error_div.hide();
-                        }
-                    },
-                    success: function(span){
-                            consoleInfo('casLoginView.jsp set-displayname-form success(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                            send({'gauthHeight':jQuery("#GAuth-component").height()});
-                    },
-                    submitHandler: function(form){
-                        set_display_name_form_submitted = true;
-                        jQuery("#set-displayname-submit").addClass("inactive");
-                        form.submit();
-                    }
-                });
-                jQuery("#verify-account-form").validate({
-                    onkeyup: false,
-                    errorElement: "span",
-                    errorPlacement:function(error,element){
-	                    var error_div = jQuery('#verify-account-form-verificationCode-errors');
-                        consoleInfo('casLoginView.jsp verify-account-form errorPlacement(): element[0].name [' + element[0].name + '], error.html() [' + error.html() + '], error_div.html() [' + error_div.html() + ']');
-                        element.removeClass("error");
-                        if (error.html() != '') {
-                            jQuery('div#login-state-verifyaccount > form#verify-account-form > div.form-alert > div').hide();
-                            error_div.html(error.html());
-                            error_div.addClass("attention");
-                            consoleInfo('casLoginView.jsp verify-account-form errorPlacement(): Showing [' + error_div[0].id + '] with [' + error_div.html() + ']');
-                            error_div.show();
-                            jQuery(".form-alert").show();
-                            jQuery("#verificationCode").focus();
-                                consoleInfo('casLoginView.jsp verify-account-form errorPlacement(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                                send({'gauthHeight':jQuery("#GAuth-component").height()});
-                        } else {
-                            consoleInfo('casLoginView.jsp verify-account-form errorPlacement(): Hiding [' + error_div[0].id + ']');
-                            error_div.html('');
-                            error_div.hide();
-                        }
-                    },
-                    success: function(span){
-                            consoleInfo('casLoginView.jsp verify-account-form success(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                            send({'gauthHeight':jQuery("#GAuth-component").height()});
-                    },
-                    submitHandler: function(form){
-                    	set_verify_account_form_submitted = true;
-                        jQuery("#verify-account-submit").addClass("inactive");
-                        form.submit();
-                    }
-                });
-                jQuery("#set-verify-phone-form").validate({
-                	onkeyup: false,
-                    errorElement: "span",
-                    errorPlacement:function(error,element){
-                        var error_div = jQuery('#set-verify-account-phone-errors');
-                        consoleInfo('casLoginView.jsp set-verify-phone-form errorPlacement(): element[0].name [' + element[0].name + '], error.html() [' + error.html() + '], error_div.html() [' + error_div.html() + ']');
-                        element.removeClass("error");
-                        if (error.html() != '') {
-                            jQuery('div#login-state-verifyaccount-setphonenumber > form#set-verify-phone-form > div.form-alert > div').hide();
-                            error_div.html(error.html());
-                            error_div.addClass("attention");
-                            consoleInfo('casLoginView.jsp set-verify-phone-form errorPlacement(): Showing [' + error_div[0].id + '] with [' + error_div.html() + ']');
-                            error_div.show();
-                            jQuery(".form-alert").show();
-                            jQuery("#verificationCode").focus();
-                                consoleInfo('casLoginView.jsp set-verify-phone-form errorPlacement(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                                send({'gauthHeight':jQuery("#GAuth-component").height()});
-                        } else {
-                            consoleInfo('casLoginView.jsp set-verify-phone-form errorPlacement(): Hiding [' + error_div[0].id + ']');
-                            error_div.html('');
-                            error_div.hide();
-                        }
-                    },
-                    success: function(span){
-                            consoleInfo('casLoginView.jsp set-verify-phone-form success(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                            send({'gauthHeight':jQuery("#GAuth-component").height()});
-                    },
-                    submitHandler: function(form){
-                    	set_verify_phone_form_submitted = true;
-                        jQuery("#login-btn-reset").addClass("inactive");
-                        form.submit();
-                    }
-                });
-                jQuery("#update-verify-phonenumber-form").validate({
-                	onkeyup: false,
-                    errorElement: "span",
-                    rules: {
-                    	updatedPhoneNumber: {
-                    		required: {
-                                // remove any leading or trailing whitespace before validating the email field
-                                depends: function () {
-                                	jQuery(this).val(jQuery.trim(jQuery(this).val()));
-                                    return true;
-                                }
-                            },
-                            minlength: 11,
-                            maxlength: 11,
-                            digits: true
-                    	}
-                    },
-                    messages: {
-                    	updatedPhoneNumber: {
-	                        required:  "Phone Number is required to send verification code to your phone.",
-	                        minlength: "Phone number must be exactly 11 digits long.",
-	                        maxlength: "Phone number must be exactly 11 digits long.",
-	                        digits:    "Phone number must be exactly 11 digits long."
-                    	}
-                    },
-                    errorPlacement:function(error,element){
-                        var error_div = jQuery('#update-verify-phonenumber-errors');
-                        consoleInfo('casLoginView.jsp update-verify-phonenumber-form errorPlacement(): element[0].name [' + element[0].name + '], error.html() [' + error.html() + '], error_div.html() [' + error_div.html() + ']');
-                        element.removeClass("error");
-                        if (error.html() != '') {
-                            jQuery('div#login-state-verifyaccount-updatephonenumber > form#update-verify-phonenumber-form > div.form-alert > div').hide();
-                            error_div.html(error.html());
-                            error_div.addClass("attention");
-                            consoleInfo('casLoginView.jsp update-verify-phonenumber-form errorPlacement(): Showing [' + error_div[0].id + '] with [' + error_div.html() + ']');
-                            error_div.show();
-                            jQuery(".form-alert").show();
-                            jQuery("#updatedPhoneNumber").focus();
-                                consoleInfo('casLoginView.jsp update-verify-phonenumber-form errorPlacement(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                                send({'gauthHeight':jQuery("#GAuth-component").height()});
-                        } else {
-                            consoleInfo('casLoginView.jsp update-verify-phonenumber-form errorPlacement(): Hiding [' + error_div[0].id + ']');
-                            error_div.html('');
-                            error_div.hide();
-                        }
-                    },
-                    success: function(span){
-                            consoleInfo('casLoginView.jsp update-verify-phonenumber-form success(): send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
-                            send({'gauthHeight':jQuery("#GAuth-component").height()});
-                    },
-                    submitHandler: function(form){
-                    	// Yes, this function looks different than all of the others but this form is not acting the
-                        // same way as the other forms. So for some reason this form is being submitted even after 
-                        // the rules run and mark the form as invalid. To keep the update-verify-phonenumber-form from 
-                        // submitting even when the form is invalid we'll wrap this form.submit() in a check for if the
-                        // form is valid.
-                        if (jQuery("#update-verify-phonenumber-form").valid()) {
-                        	form.submit();
-                        	update_verify_phone_form_submitted = true;
-                        	jQuery("#update-verify-phonenumber-submit").addClass("inactive");
-                        }
-                    }
-                });
-                consoleInfo("casLoginView.jsp: done setting form validation rules...");
-                jQuery.validator.addMethod('regex',
-                    function (value, element, param){
-                        var re = new RegExp(param);
-                        return this.optional(element)|| re.test(value);
-                    },
-                '');
-                consoleInfo("casLoginView.jsp: setting field validation rules...");
-                jQuery("#username").rules("add",{
-                    required: true,
-                    messages: {
-                        required:  "Email is required."
-                }});
-                jQuery("#password").rules("add", {
-                    required: true,
-                    messages: {
-                        required:  "Password is required."
-                    }
-                });
-                // Ensure "Forgot Password?" "Email Address" field specified is an email address.
-                jQuery("#reset-password-loginID").rules("add",{
-                    required: {
-                    	// remove any leading or trailing whitespace before validating the email field
-                    	depends: function () {
-                    		jQuery(this).val(jQuery.trim(jQuery(this).val()));
-                            return true;
-                        }
-                    },
-                    maxlength:100,
-                    regex: "^((([a-zA-Z0-9\\!(\\#\\$)\\%\\&amp;\\'\\*\\+\\-\\/\\=\\?\\^\\_\\`\\{\\|\\}\\~]+(\\.[a-zA-Z0-9\!\#\$\%\&amp;\'\*\+\-\/\=\?\^\_\`\{\|\}\~]+)*))|(\"([ \t]*([\x01-\x08\x0B\x0C\x0E-\x1F\x7F\x21\x23-\x5B\x5D-\x7E]|(\\[\x01-\x09\x0B\x0C\x0E-\x7F])))*[ \t]*\"))@[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\\.[a-zA-Z]{2,6}$",
-                    messages: {
-                        required:  "Email Address is required.",
-                        maxlength: "Email Address must be 100 characters or fewer.",
-                        regex:     "Email address is invalid."
-                }});
-                jQuery("#newPassword").rules("add", {
-                    required: true,
-                    minlength: 8,
-                    maxlength: 50,
-                    // Note: Character class substitutions are NOT supported in JavaScript regexes!!!
-                    //       i.e. Any a to z except for c to e must be expressed as "[a-bf-z]", not as "[a-z&&[^c-e]]"
-                    // Match exactly to eight or more ascii characters from ! to ~ except for these: "/ (double quote & forward slash) 
-                    // Use positive lookaheads to ensure at least one digit, upper case letter and lower case letter were specified.
-                    regex: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[!#-.0-~]{8,}$", 
-                    messages: {
-                        required:  "Password is required.",
-                        minlength: "Minimum password length is 8 characters. Please use at least 1 uppercase letter, 1 lowercase letter and 1 numeral. Forward slashes and double quotes are not allowed.",
-                        maxlength: "Password must be 50 characters or less.",
-                        regex:     "Minimum password length is 8 characters. Please use at least 1 uppercase letter, 1 lowercase letter and 1 numeral. Forward slashes and double quotes are not allowed."
-                    }
-                });
-                jQuery("#confirmPassword").rules("add", {
-                    equalTo: "#newPassword",
-                    minlength:8,
-                    maxlength:50,
-                    messages: {
-                        equalTo:   "Passwords do not match.",
-                        minlength: "Minimum password length is 8 characters. Please use at least 1 uppercase letter, 1 lowercase letter and 1 numeral. Forward slashes and double quotes are not allowed.",
-                        maxlength: "Password must be 50 characters or less."
-                    }
-                });
-                jQuery("#strengthenPassword").rules("add", {
-                    required: true,
-                    minlength: 8,
-                    maxlength: 50,
-                    // Note: Character class substitutions are NOT supported in JavaScript regexes!!!
-                    //       i.e. Any a to z except for c to e must be expressed as "[a-bf-z]", not as "[a-z&&[^c-e]]"
-                    // Match exactly to eight or more ascii characters from ! to ~ except for these: "/ (double quote & forward slash) 
-                    // Use positive lookaheads to ensure at least one digit, upper case letter and lower case letter were specified.
-                    regex: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[!#-.0-~]{8,}$", 
-                    messages: {
-                        required:  "Password is required.",
-                        minlength: "Minimum password length is 8 characters. Please use at least 1 uppercase letter, 1 lowercase letter and 1 numeral. Forward slashes and double quotes are not allowed.",
-                        maxlength: "Password must be 50 characters or less.",
-                        regex:     "Minimum password length is 8 characters. Please use at least 1 uppercase letter, 1 lowercase letter and 1 numeral. Forward slashes and double quotes are not allowed."
-                    }
-                });
-                jQuery("#confirmStrengthenPassword").rules("add", {
-                    equalTo: "#strengthenPassword",
-                    minlength:8,
-                    maxlength:50,
-                    messages: {
-                        equalTo:   "Passwords do not match.",
-                        minlength: "Minimum password length is 8 characters. Please use at least 1 uppercase letter, 1 lowercase letter and 1 numeral. Forward slashes and double quotes are not allowed.",
-                        maxlength: "Password must be 50 characters or less."
-                    }
-                });
-                jQuery("#newEmailAddress").rules("add",{
-                    required: {
-                    	// remove any leading or trailing whitespace before validating the email field
-                    	depends:function(){
-                    		jQuery(this).val(jQuery.trim(jQuery(this).val()));
-                            return true;
-                        }
-                    },
-                    maxlength:100,
-                    regex: "^((([a-zA-Z0-9\\!(\\#\\$)\\%\\&amp;\\'\\*\\+\\-\\/\\=\\?\\^\\_\\`\\{\\|\\}\\~]+(\\.[a-zA-Z0-9\!\#\$\%\&amp;\'\*\+\-\/\=\?\^\_\`\{\|\}\~]+)*))|(\"([ \t]*([\x01-\x08\x0B\x0C\x0E-\x1F\x7F\x21\x23-\x5B\x5D-\x7E]|(\\[\x01-\x09\x0B\x0C\x0E-\x7F])))*[ \t]*\"))@[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\\.[a-zA-Z]{2,6}$",
-                    remote: {
-                        url:  "/sso/validateNewAccount?clientId=GarminConnect",
-                        type: "POST"
-                    },
-                    messages: {
-                        required:  "Email Address is required.",
-                        maxlength: "Email Address must be 100 characters or fewer.",
-                        regex:     "Email address is invalid.",
-                        remote:    "This email address is already in use.  Please <a href='#' onclick='signInEmail();return false;'>sign in</a> with this email address or enter another."
-                }});
-                jQuery("#confirmEmailAddress").rules("add", {
-                    equalTo: "#newEmailAddress",
-                    maxlength:100,
-                    messages: {
-                        equalTo:   "Email addresses do not match.",
-                        maxlength: "Email Address must be 100 characters or fewer."
-                    }
-                });
-                jQuery("#newDisplayName").rules("add", {
-                    required: true,
-                    minlength: 4,
-                    maxlength: 100,
-                    // Note: Character class substitutions are NOT supported in JavaScript regexes!!!
-                    //       i.e. Any a to z except for c to e must be expressed as "[a-bf-z]", not as "[a-z&&[^c-e]]"
-                    regex: "^[a-zA-Z0-9\\-_$.+!]*$", // Space or any of these characters are not allowed ?'\\\":;#%^&=|~<>/\[]{},*()@
-                    remote: {
-                        url:      "/sso/validateNewAccount?clientId=GarminConnect",
-                        type:     "POST"
-                    },
-                    messages: {
-                        required:  "Display Name is required.",
-                        minlength: "Display Name must be at least 4 characters.",
-                        maxlength: "Display Name must be 100 characters or fewer.",
-                        regex:     "Your display name can't contain spaces or any of the following characters: ?'`\":;#%^&=|~<>/\[]{},*()@",
-          		        remote:    "Sorry, this display name is already taken. Please choose another."
-                    }
-                });
-                jQuery("#verificationCode").rules("add", {
-                    required: {
-                    	// remove any leading or trailing whitespace before validating the email field
-                    	depends: function () {
-                    		jQuery(this).val(jQuery.trim(jQuery(this).val()));
-                            return true;
-                        }
-                    },
-                    messages: {
-                        required:  "Verification code required."
-                    }
-                });
-                jQuery("#newPhoneNumber").rules("add", {
-                	required: {
-                    	// remove any leading or trailing whitespace before validating the email field
-                    	depends: function () {
-                    		jQuery(this).val(jQuery.trim(jQuery(this).val()));
-                            return true;
-                        }
-                    },
-                	minlength: 11,
-                    maxlength: 11, 
-                    // Starts with 86 and followed by 11 other digits
-                    digits: true,
-                    messages: {
-                    	required:  "Phone Number is required to send verification code to your phone.",
-                    	minlength: "Phone number must be exactly 11 digits long.",
-                        maxlength: "Phone number must be exactly 11 digits long.",
-                        digits:    "Phone number must be exactly 11 digits long."
-                    }
-                });
-                consoleInfo("casLoginView.jsp: done setting field validation rules...");
-                var login_form_submitted = false;
-                jQuery("#login-btn-signin").click(function(){
-                    if (Get_Cookie('LastLoginSocial')) {
-                        delete_cookie('LastLoginSocial');
-                    }
-                    if (!login_form_submitted) {
-                        jQuery('#login-form').submit();
-                    }
-                    return false;
-                });
-                var recover_password_form_submitted = false;
-                jQuery("#login-btn-reset").click(function(){
-                    if (Get_Cookie('LastLoginSocial')) {
-                        delete_cookie('LastLoginSocial');
-                    }
-                    if (!recover_password_form_submitted) {
-                        jQuery('#reset-password-form').submit();
-                    }
-                    return false;
-                });
-                var renew_password_form_submitted = false;
-                jQuery("#renew-password-submit").click(function(){
-                	if (!renew_password_form_submitted) {
-                        jQuery('#renew-password-form').submit();
-                    }
-                    return false;
-                });
-                var change_password_form_submitted = false;
-                jQuery("#change-password-submit").click(function(){
-                    if (!change_password_form_submitted) {
-                        jQuery('#change-password-form').submit();
-                    }
-                    return false;
-                });
-                var set_email_address_form_submitted = false;
-                jQuery("#set-emailaddress-submit").click(function(){
-                    if (!set_email_address_form_submitted) {
-                        jQuery('#set-emailaddress-submit').submit();
-                    }
-                    return false;
-                });
-                var set_display_name_form_submitted = false;
-                jQuery("#set-displayname-submit").click(function(){
-                    if (!set_display_name_form_submitted) {
-                        jQuery('#set-displayname-submit').submit();
-                    }
-                    return false;
-                });
-                var set_verify_account_form_submitted = false;
-                jQuery("#verify-account-submit").click(function(){
-                	if (acceptTermsOfUse()){
-	                    if (!set_verify_account_form_submitted) {
-	                        jQuery('#verify-account-submit').submit();
-	                    }
-                	}
-                    return false;
-                });
-                var update_verify_phone_form_submitted = false;
-                jQuery("#update-verify-phonenumber-submit").click(function(){
-                    if (!update_verify_phone_form_submitted) {
-                        jQuery('#update-verify-phonenumber-form').submit();
-                    }
-                    return false;
-                });
-                // Show loading icon while performing email validation.
-                jQuery("#newEmailAddress").change(function(){
-                    var elParent = jQuery(this).parents(".formTextField");
-                    var errLbl   = jQuery("#set-emailaddress-form-newEmailAddress-errors span");
-                    var success  = jQuery(this).parents(".success");
-                    if (jQuery(this).val() && !errLbl.html() && success.length == 0){
-                        elParent.addClass("loading");
-                    }
-                });
-                // Show loading icon while performing display name validation.
-                jQuery("#newDisplayName").change(function(){
-                    var elParent = jQuery(this).parents(".formTextField");
-                    var errLbl   = jQuery("#set-displayname-form-newDisplayName-errors span");
-                    var success  = jQuery(this).parents(".success");
-                    if (jQuery(this).val() && !errLbl.html() && success.length == 0){
-                        elParent.addClass("loading");
-                    }
-                });
-                consoleInfo("casLoginView.jsp: validation rules set.");
-            });
-            XD.receiveMessage(function(m){
-               consoleInfo("casLoginView.jsp: " + m.data + " received on " + window.location.host);
-                if (m && m.data) {
-                    var md = m.data;
-                    if (typeof(md) === 'string') {
-                        md = JSON.parse(m.data);
-                    }
-                    if (md.setUsername) {
-                        consoleInfo("casLoginView.jsp: Setting username \"" + md.username + "\"...");
-                        jQuery("#signInWithDiffLink").click(); // Ensure the normal login form is shown.
-                        jQuery("#username").val(md.username);
-                        jQuery("#password").focus();
-                    }
-                }
-            }, parentHost);
-        </script>
-        <script type="text/javascript" src="/sso/js/gigyaUtils.js?20130213"></script>
-        <script type="text/javascript" src="/sso/js/casLoginView.js?20160803"></script>
-    </head>
-    <body>
-        <script type="text/javascript" src="//tags.tiqcdn.com/utag/garmin/main/prod/utag.js"></script>
-        <div id="GAuth-component">
-            <div id="login-component" class="blueForm-basic">
-                <div id="login-state-default">
-                    <h2>Garmin Account Sign In</h2>
-                    <form id="login-form" action="/sso/login?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&amp;clientId=GarminConnect&amp;consumeServiceTicket=false" method="post">
-                        <div class="form-alert">
-                            <div id="login-form-username-errors" style="display:none;"></div>
-                            <div id="login-form-password-errors" style="display:none;"></div>
-                        </div>
-                        <div class="textfield">
-							<label for="username">Email</label>
-							       <input id="username" name="username" class="login_email" tabindex="1" type="text" value="" autocomplete="false"/>
-                        </div>
-                        <div class="textfield">
-                            <label for="password">Password</label><a id="loginforgotpassword" class="login-forgot-password" href="#">(Forgot?)</a>
-                            <input id="password" name="password" tabindex="2" type="password" value="" autocomplete="false"/>
-                        </div>
-                        <input type="hidden" name="embed"                  value="true"/>
-                        <input type="hidden" name="lt"                     value="e1s1" />
-                        <input type="hidden" name="_eventId"               value="submit" />
-                        <input id="displayNameRequired" name="displayNameRequired" type="hidden" value="false"/>
-                        <button type="submit" id="login-btn-signin" class="btn1" tabindex="4" accesskey="l">Sign In</button>
-                    </form>
-                </div>    
-                <div id="login-state-password">
-                    <h2>Forgot Password?</h2>
-	                    <p>Enter the email address associated with your account.</p>
-                    <form method="post" action="/sso/resetPassword?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&clientId=GarminConnect&consumeServiceTicket=false&fromPage=casLoginView" id="reset-password-form" name="reset-password-form">
-                        <div class="form-alert">
-                            <div id="reset-password-loginID-errors" style="display:none;"></div>
-                        </div>
-                        <input type="hidden" name="action"           value="/sso/login?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&amp;clientId=GarminConnect&amp;consumeServiceTicket=false"/>
-                        <input type="hidden" name="flowExecutionKey" value="e1s1" />
-                        <div class="textfield">
-                            <label for="reset-password-loginID">Email Address</label>
-						       <input type="text" name="resetPasswordID" id="reset-password-loginID" value="" />
-                        </div>
-                        <button type="submit" id="login-btn-reset"  class="btn1"tabindex="4" accesskey="l">Recover Password</button>
-                        <button type="button" id="login-btn-cancel" class="btn1 btn-sec">Cancel</button>
-                    	<p>For additional help, contact <a href="http://www.garmin.com/us/support/contact" target="_blank">Product Support</a>.</p>
-                    </form>
-                </div>
-                <div id="login-state-renewpassword">
-                    <h2>Change Password</h2>
-                    <form id="renew-password-form" action="/sso/login?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&amp;clientId=GarminConnect&amp;consumeServiceTicket=false" method="post">
-	                    <div class="form-alert">
-		                    <div id="renewPassword" class="attention">We've recently updated our password policies to help better protect our customer's accounts. Your current password does not satisfy our minimum complexity requirements. Please update your password now.</div>
-						    <div id="renew-password-form-newPassword-errors"     style="display:none;"></div>
-						    <div id="renew-password-form-confirmPassword-errors" style="display:none;"></div>
-						</div>
-						<div class="textfield">
-						    <label for="strengthenPassword">New Password<abbr class="req" title="Required">*</abbr></label>
-						    <input id="strengthenPassword" name="newPassword" tabindex="2" name="strengthenPassword" type="password" value="" autocomplete="false"/>
-						    <span class="attn">(Password must be at least 8 characters: 1 uppercase, 1 lowercase and 1 numeral.)</span>
-						</div>
-						<div class="textfield">
-						    <label for="confirmStrengthenPassword">Retype New Password<abbr class="req" title="Required">*</abbr></label>
-						    <input id="confirmStrengthenPassword" name="confirmPassword" tabindex="2" name="confirmStrengthenPassword" type="password" value="" autocomplete="false"/>
-						</div>
-						<input type="hidden" id="skipPassword" name="skipPassword" value="false"/>
-						<input type="hidden" name="username"            value="" />
-                        <input type="hidden" name="password"            value="" />
-	                    <input type="hidden" name="displayNameRequired" value="" />
-                        <input type="hidden" name="embed"               value="true"/>
-                        <input type="hidden" name="lt"                  value="e1s1" />
-                        <input type="hidden" name="_eventId"            value="submit" />
-                        <button type="submit" id="renew-password-submit" class="btn1" tabindex="4" accesskey="l">Save</button>
-                        <button type="button" id="renew-password-skip" formnovalidate class="cancel btn1 btn-sec" tabindex="4" accesskey="l">Skip</button>
-                    </form>
-                </div>
-                <div id="login-state-setpassword">
-                    <h2>Change Password</h2>
-                    <p>To ensure the security of your account, please choose a new password.</p>
-                    <form id="change-password-form" action="/sso/login?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&amp;clientId=GarminConnect&amp;consumeServiceTicket=false" method="post">
-                        <div class="form-alert">
-                            <div id="change-password-form-newPassword-errors"     style="display:none;"></div>
-                            <div id="change-password-form-confirmPassword-errors" style="display:none;"></div>
-                        </div>
-                        <div class="textfield">
-                            <label for="newPassword">New Password<abbr class="req" title="Required">*</abbr></label>
-                            <input id="newPassword" name="newPassword" tabindex="2" name="newPassword" type="password" value="" autocomplete="false"/>
-                            <span class="attn">(Password must be at least 8 characters: 1 uppercase, 1 lowercase and 1 numeral.)</span>
-                        </div>
-                        <div class="textfield">
-                            <label for="confirmPassword">Retype New Password<abbr class="req" title="Required">*</abbr></label>
-                            <input id="confirmPassword" name="confirmPassword" tabindex="2" name="confirmPassword" type="password" value="" autocomplete="false"/>
-                        </div>
-                        <input type="hidden" name="username"            value="" />
-                        <input type="hidden" name="password"            value="" />
-	                    <input type="hidden" name="displayNameRequired" value="" />
-                        <input type="hidden" name="embed"               value="true"/>
-                        <input type="hidden" name="lt"                  value="e1s1" />
-                        <input type="hidden" name="_eventId"            value="submit" />
-                        <button type="submit" id="change-password-submit" class="btn1" tabindex="4" accesskey="l">Save</button>
-                    </form>
-                </div>
-	            <div id="login-state-verifyaccount-updatephonenumber" class="blueForm-v2">
-	                <h2>Update Phone number</h2>
-	                <form method="post" id="update-verify-phonenumber-form" name="update-verify-phonenumber-form" action="/sso/verifyAccount?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&clientId=GarminConnect&consumeServiceTicket=false&fromPage=casLoginView">
-	                    <div class="form-alert">
-	                        <div id="update-verify-phonenumber-errors" style="display:none;"></div>
-	                    </div>
-	                    <div class="formTextField" id="updatePhoneNumberField">
-	                        <div class="verifyFormLabel">
-	                             <label for="updatedPhoneNumber">Phone Number<abbr class="req" title="Required">*</abbr></label>
-	                         </div>
-	                         <div class="formField">
-	                             <input type="tel" id="updatedPhoneNumber" name="updatedPhoneNumber" class="text" />
-	                         </div>
-	                    </div>
-	                    <input type="hidden" name="username"            value="" />
-	                    <input type="hidden" name="password"            value="" />
-	                    <input type="hidden" name="customerGUID"        value="" />
-	                    <input type="hidden" name="lt"                  value="e1s1" />
-	                    <input type="hidden" name="embed"               value="true"/>
-	                    <br />
-	                    <button type="button" id="update-verify-phonenumber-cancel" formnovalidate class="cancel btn1 btn-sec" tabindex="4" accesskey="l">Cancel</button>
-	                    <button type="submit" id="update-verify-phonenumber-submit" class="btn1" tabindex="4" accesskey="l">Update</button>
-	                 </form>
-	            </div>
-                 <div id="login-state-verifyaccount-setphonenumber" class="blueForm-v2">
-                 	 <p>Phone Number is required to send verification code to your phone.</p>
-                 	 <form method="post" id="set-verify-phone-form" action="/sso/verifyAccount?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&clientId=GarminConnect&consumeServiceTicket=false&fromPage=casLoginView" novalidate="true">
-                      	<div class="form-alert">
-                            <div id="set-verify-account-phone-errors" style="display:none;"></div>
-                        </div>
-                        <div class="textfield">
-                            <label for="phoneNumber">Phone Number<abbr class="req" title="Required">*</abbr></label>
-                            <input type="tel" id="newPhoneNumber" name="newPhoneNumber" class="text" />
-                        </div>
-                        <input type="hidden" name="username"            value="" />
-                        <input type="hidden" name="password"            value="" />
-                        <input type="hidden" name="customerGUID"        value="" />
-			        	<input type="hidden" name="newPhoneNumber"  	value="" />
-                        <input type="hidden" name="embed"               value="true"/>
-                        <input type="hidden" name="lt"                  value="e1s1" />
-                        <input type="hidden" name="_eventId"            value="submit" />
-                        <button type="submit" id="add-phonenumber-submit" class="btn1" tabindex="4" accesskey="l">Send</button>
-                 	 </form>
-                 </div>
-                <div id="login-state-verifyaccount" class="blueForm-v2">
-				     	<h2>Please authenticate</h2>
-				     	Your account with phone number {0} has not been verified yet. Please request a new verification code by clicking the link below.
-		                <form id="verify-account-form" name="verify-account-form" method="post" action="/sso/verifyAccount?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&clientId=GarminConnect&consumeServiceTicket=false&fromPage=casLoginView" novalidate="true">
-			                <div class="form-alert" id="verify-account-form-alert">
-			                    <div id="newCodeRequested" class="attention" style="display:none;">A new verification code has been sent.</div>
-			                    <div id="verify-account-form-verificationCode-errors" style="display:none;"></div>
-		                    </div>
-				        	<div class="formTextField" id="verificationCodeField" style="background-image:none">
-				                <div class="verifyFormLabel">
-				                    <label for="code">Verification Code<abbr class="req" title="Required">*</abbr></label>
-				                </div>
-						        <div class="formField">
-						            <input type="text" id="verificationCode" name="verificationCode" class="text" />
-						        </div>
-					        </div>
-					        <p> <input id="termsOfUse" type="checkbox" name="termsOfUse" onClick="initTermsOfUseCheckbox()" width:20px" />
-					        I Accept the Garmin <a href="http://www.garmin.com/terms" class="termsOfUse">Terms of Use</a> and <a href="http://www.garmin.com/privacy" class="privacyStatement">Privacy Statement</a>. </p>		        	 	           		        	  
-		        	        <div class="form-alert">
-		        	           <div id="verificationTermsAlert" style="display:none;" class="error" >Please accept the Garmin <a href="http://www.garmin.com/terms" class="termsOfUse">Terms of Use</a> and <a href="http://www.garmin.com/privacy" class="privacyStatement">Privacy Statement</a>. </div>
-		        	       </div>
-							<button type="submit" id="verify-account-submit" class="btn1">Sign In</button>
-					        <input type="hidden" name="username"         value="" />
-					        <input type="hidden" name="phoneNumber"      value="" />
-					        <input type="hidden" name="password"         value="" />
-					        <input type="hidden" name="customerGUID"     value="" />
-					        <input type="hidden" name="action"           value="/sso/login?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&amp;clientId=GarminConnect&amp;consumeServiceTicket=false"/>
-	                        <input type="hidden" name="flowExecutionKey" value="e1s1" />
-	                        <input type="hidden" name="embed"               value="true"/>
-	                        <br />
-			            	<p><a id='verifyaccountupdatephone' class='verify-account-update-phonenumber' href='#'>Change Your Phone Number</a></p>
-			                <p><a onclick='resendVerificationCode();return false;' href='#'>Send a new code</a></p>
-				        </form>
-	        </div>
-                <div id="login-state-setemailaddress" class="blueForm-v2">
-                    <h2>Enter Email Address</h2>
-                    <p>Please enter an email address for this account.</p>
-                    <form id="set-emailaddress-form" action="/sso/login?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&amp;clientId=GarminConnect&amp;consumeServiceTicket=false" method="post">
-                        <div class="form-alert">
-                            <div id="set-emailaddress-form-newEmailAddress-errors"     style="display:none;"></div>
-                            <div id="set-emailaddress-form-confirmEmailAddress-errors" style="display:none;"></div>
-                        </div>
-                        <fieldset>
-                        <div class="formTextField smallFormTextField">
-                            <div class="formLabel">
-                                <label for="newEmailAddress">Email Address<abbr class="req" title="Required">*</abbr></label>
-                            </div><div class="formField smallFormField">
-                                <input id="newEmailAddress" name="newEmailAddress" tabindex="1" name="newEmailAddress" type="text" class="text" value="" autocomplete="false"/>
-                            </div><div class="formAlert smallFormAlert" >
-                                <div class="alert"></div>
-                            </div>
-                        </div>
-                        <div class="formTextField smallFormTextField">
-                            <div class="formLabel">
-                                <label for="confirmEmailAddress">Retype Email Address<abbr class="req" title="Required">*</abbr></label>
-                            </div><div class="formField smallFormField">
-                                <input id="confirmEmailAddress" name="confirmEmailAddress" tabindex="2" name="confirmEmailAddress" type="text" value="" autocomplete="false"/>
-                            </div><div class="formAlert smallFormAlert" >
-                                <div class="alert"></div>
-                            </div>
-                        </div>
-                        </fieldset>
-                        <input type="hidden" name="username" value="" />
-                        <input type="hidden" name="password" value="" />
-	                    <input type="hidden" name="displayNameRequired" value="" />
-                        <input type="hidden" name="embed"    value="true"/>
-                        <input type="hidden" name="lt"       value="e1s1" />
-                        <input type="hidden" name="_eventId" value="submit" />
-                        <button type="submit" id="set-emailaddress-submit" class="btn1" tabindex="4" accesskey="l">Save</button>
-                    </form>
-                </div>
-                <div id="login-state-setdisplayname">
-                    <h2>Choose Display Name</h2>
-                    <p>Please choose a display name for this account.</p>
-                    <form id="set-displayname-form" action="/sso/login?service=https%3A%2F%2Fconnect.garmin.com%2Fpost-auth%2Flogin&amp;clientId=GarminConnect&amp;consumeServiceTicket=false" method="post">
-                        <div class="form-alert">
-                            <div id="set-displayname-form-newDisplayName-errors" style="display:none;"></div>
-                        </div>
-                        <div class="formTextField smallFormTextField">
-                            <div class="formLabel">
-                                <label for="newDisplayName">Display Name<abbr class="req" title="Required">*</abbr></label>
-                            </div><div class="formField smallFormField">
-                                <input id="newDisplayName" name="newDisplayName" tabindex="1" name="newDisplayName" type="text" value="" autocomplete="false"/>
-                                <span class="attn formField">(Your public activities show this name.)</span>
-                            </div><div class="formAlert smallFormAlert" >
-                                <div class="alert"></div>
-                            </div>
-                        </div>
-                        <input type="hidden" name="username" value="" />
-                        <input type="hidden" name="password" value="" />
-	                    <input type="hidden" name="displayNameRequired" value="" />
-                        <input type="hidden" name="embed"    value="true"/>
-                        <input type="hidden" name="lt"       value="e1s1" />
-                        <input type="hidden" name="_eventId" value="submit" />
-                        <button type="submit" id="set-displayname-submit" class="btn1" tabindex="4" accesskey="l">Save</button>
-                    </form>
-                </div>
-                <div id="login-state-returning">
-                        <h2>Sign In</h2>
-                        <div class="form-alert">
-                        </div>
-	                    <p class="SSI-welcome-msg">Welcome back, <span id="SSI-welcome-user"> </span>. <a id="notYouLink" href="#">(Not You?)</a></p>
-                        <a href="#" onclick="loginGigya('facebook',  socialConfigURL, embedWidget);return false;" style="display:none;" id="loginFacebookLink" class="btn1 btn-sec">
-                            <img src="https://sso.garmin.com/sso/images/btn-facebook-sm.png" alt="Facebook" />Sign in with Facebook
-                        </a>
-                        <a href="#" onclick="loginGigya('googleplus',    socialConfigURL, embedWidget);return false;" style="display:none;" id="loginGoogleLink" class="btn1 btn-sec">
-                            <img src="https://sso.garmin.com/sso/images/btn-google-sm.png" alt="Google" />Sign in with Google
-                        </a>
-                        <a href="#" onclick="loginGigya('yahoo',     socialConfigURL, embedWidget);return false;" style="display:none;" id="loginYahooLink" class="btn1 btn-sec">
-                            <img src="https://sso.garmin.com/sso/images/btn-yahoo-sm.png" alt="Yahoo!" />Sign in with Yahoo!
-                        </a>
-                        <a href="#" onclick="loginGigya('twitter',   socialConfigURL, embedWidget);return false;" style="display:none;" id="loginTwitterLink" class="btn1 btn-sec">
-                            <img src="https://sso.garmin.com/sso/images/btn-twitter-sm.png" alt="Twitter" />Sign in with Twitter
-                        </a>
-                        <a href="#" onclick="loginGigya('messenger', socialConfigURL, embedWidget);return false;" style="display:none;" id="loginMessengerLink" class="btn1 btn-sec">
-                            <img src="https://sso.garmin.com/sso/images/btn-windows-sm.png" alt="Window Live" />Sign in with Windows Live
-                        </a>
-                        <a href="#" onclick="loginGigya('linkedin', socialConfigURL, embedWidget);return false;" style="display:none;" id="loginLinkedInLink" class="btn1 btn-sec">
-                            <img src="https://sso.garmin.com/sso/images/btn-linkedin-sm.png" alt="LinkedIn" />Sign in with LinkedIn
-                        </a>
-                        <a href="#" onclick="loginGigya('renren',    socialConfigURL, embedWidget);return false;" style="display:none;" id="loginRenrenLink" class="btn1 btn-sec">
-                            <img src="https://sso.garmin.com/sso/images/btn-renren-sm.png" alt="Renren" />Sign in with Renren
-                        </a>
-                        <a href="#" onclick="loginGigya('sina',      socialConfigURL, embedWidget);return false;" style="display:none;" id="loginSinaLink" class="btn1 btn-sec">
-                            <img src="https://sso.garmin.com/sso/images/btn-sina-sm.png" alt="Sina" />Sign in with Sina
-                        </a>
-                        <a href="#" onclick="loginGigya('wechat',    socialConfigURL, embedWidget);return false;" style="display:none;" id="loginWeChatLink" class="btn1 btn-sec">
-                            <img src="https://sso.garmin.com/sso/images/btn-wechat-sm.png" alt="WeChat" />Sign in with WeChat
-                        </a>
-                        <a href="#" onclick="loginGigya('qq',    socialConfigURL, embedWidget);return false;" style="display:none;" id="loginQQLink" class="btn1 btn-sec">
-                            <img src="https://sso.garmin.com/sso/images/btn-qq-sm.png" alt="QQ" />Sign in with QQ
-                        </a>
-	                    <p><a id="signInWithDiffLink" href="#">Sign in with a Different Account</a></p>
-                </div>
-	            <div id="login-create-account">
-                    Don't have an account?
-                            <a href='javascript:void(0)' class="createAccountLink" id="lnkCreateAccount" title="Create Account">Create One</a>
-	            </div>
-	            <div id="SSI-component">
-	                    <h2>Or Sign In with:</h2>
-	                    <div class="SSI-icons">
-                            <a href="#" onclick="loginGigya('facebook',   socialConfigURL, embedWidget);return false;" id="loginFacebookSI" title="Sign in with Facebook"></a>
-                            <a  href="#" onclick="loginGigya('googleplus',    socialConfigURL, embedWidget);return false;" id="loginGoogleSI"   title="Sign in with Google"></a>
-                            <a  href="#" onclick="loginGigya('yahoo',     socialConfigURL, embedWidget);return false;" id="loginYahooSI"    title="Sign in with Yahoo!"></a>
-                            <a  href="#" onclick="loginGigya('twitter',   socialConfigURL, embedWidget);return false;" id="loginTwitterSI"  title="Sign in with Twitter"></a>
-                            <a  href="#" onclick="loginGigya('messenger', socialConfigURL, embedWidget);return false;" id="loginWindowsSI"  title="Sign in with Windows Live"></a>
-                            <a href="#" onclick="loginGigya('linkedin',  socialConfigURL, embedWidget);return false;" id="loginLinkedInSI" title="Sign in with LinkedIn"></a>
-	                    </div>
-	            </div>
-                <div class="clearfix"></div> 
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge;" />
+  <title>GARMIN Authentication Application</title>
+  <link href="/sso/css/GAuth.css?20170505" rel="stylesheet" type="text/css" media="all" />
+  <link rel="stylesheet" href="https://static.garmincdn.com/com.garmin.connect/ui/css/gauth-custom-v1.2-min.css"/>
+  <script type="text/javascript" src="/sso/js/jquery/3.1.1/jquery.min.js?20170505"></script>
+  <script type="text/javascript">jQuery.noConflict();</script>
+  <script type="text/javascript" src="/sso/js/jquery-validate/1.16.0/jquery.validate.min.js?20170505"></script>
+  <script type="text/javascript" src="/sso/js/jsUtils.js?20121003"></script>
+  <script type="text/javascript" src="/sso/js/json2.js"></script>
+  <script type="text/javascript" src="/sso/js/consoleUtils.js?20120711"></script>
+  <script type="text/javascript" src="/sso/js/postmessage.js?20120711"></script>
+  <script type="text/javascript" src="/sso/js/popupWindow.js"></script>
+  <script type="text/javascript" src="/sso/js/base.js?20170505"></script>
+  <script type="text/javascript" src="/sso/js/gigyaUtils.js?20171017"></script>
+  <script type="text/javascript" src="/sso/js/login.js?20170505"></script>
+  <!-- Tealium tag -->
+  <script type="text/javascript" src="//tags.tiqcdn.com/utag/garmin/main/prod/utag.js"></script>
+  <script type="text/javascript">
+      var parent_url      = "https:\/\/sso.garmin.com\/sso\/login";
+      var status 			= "";
+      var result          = "";
+      var clientId		= 'GarminConnect';
+      var embedWidget 	= false;
+      var isUsernameDefined = (false == true) || (false == true);
+      // Gigya callback to SocialSignInController for brand new social network users redirects to this page
+      // to popup Create or Link Social Account page, but has a possibly mangled source parameter
+      // where "?" is set as "<QM>", so translate it back to "?" here.
+      parent_url = parent_url.replace('<QM>', '?');
+      var parent_scheme   = parent_url.substring(0, parent_url.indexOf("://"));
+      var parent_hostname = parent_url.substring(parent_scheme.length + 3, parent_url.length);
+      if (parent_hostname.indexOf("/") != -1) {
+          parent_hostname = parent_hostname.substring(0, parent_hostname.indexOf("/"));
+      }
+      var parentHost      	   = parent_scheme + "://" + parent_hostname;
+      var createAccountConfigURL = '\/createNewAccount?service%3Dhttps%253A%252F%252Fconnect.garmin.com%252Fmodern%252F%26webhost%3Dhttps%253A%252F%252Fconnect.garmin.com%26source%3Dhttps%253A%252F%252Fsso.garmin.com%252Fsso%252Flogin%26redirectAfterAccountLoginUrl%3Dhttps%253A%252F%252Fconnect.garmin.com%252Fmodern%252F%26redirectAfterAccountCreationUrl%3Dhttps%253A%252F%252Fconnect.garmin.com%252Fmodern%252F%26gauthHost%3Dhttps%253A%252F%252Fsso.garmin.com%252Fsso%26locale%3Den_US%26id%3Dgauth-widget%26cssUrl%3Dhttps%253A%252F%252Fstatic.garmincdn.com%252Fcom.garmin.connect%252Fui%252Fcss%252Fgauth-custom-v1.2-min.css%26clientId%3DGarminConnect%26rememberMeShown%3Dtrue%26rememberMeChecked%3Dfalse%26createAccountShown%3Dtrue%26openCreateAccount%3Dfalse%26usernameShown%3Dfalse%26displayNameShown%3Dfalse%26consumeServiceTicket%3Dfalse%26initialFocus%3Dtrue%26embedWidget%3Dfalse%26generateExtraServiceTicket%3Dfalse';
+      var socialConfigURL        = 'https://sso.garmin.com/sso/socialSignIn?service%3Dhttps%3A%2F%2Fconnect.garmin.com%2Fmodern%2F%26webhost%3Dhttps%3A%2F%2Fconnect.garmin.com%26source%3Dhttps%3A%2F%2Fsso.garmin.com%2Fsso%2Flogin%26redirectAfterAccountLoginUrl%3Dhttps%3A%2F%2Fconnect.garmin.com%2Fmodern%2F%26redirectAfterAccountCreationUrl%3Dhttps%3A%2F%2Fconnect.garmin.com%2Fmodern%2F%26gauthHost%3Dhttps%3A%2F%2Fsso.garmin.com%2Fsso%26locale%3Den_US%26id%3Dgauth-widget%26cssUrl%3Dhttps%3A%2F%2Fstatic.garmincdn.com%2Fcom.garmin.connect%2Fui%2Fcss%2Fgauth-custom-v1.2-min.css%26clientId%3DGarminConnect%26rememberMeShown%3Dtrue%26rememberMeChecked%3Dfalse%26createAccountShown%3Dtrue%26openCreateAccount%3Dfalse%26usernameShown%3Dfalse%26displayNameShown%3Dfalse%26consumeServiceTicket%3Dfalse%26initialFocus%3Dtrue%26embedWidget%3Dfalse%26generateExtraServiceTicket%3Dfalse';
+      var gigyaURL               = "https://cdns.gigya.com/js/gigya.js?apiKey=2_R3ZGY8Bqlwwk3_63knoD9wA_m-Y19mAgW61bF_s5k9gymYnMEAtMrJiF5MjF-U7B";
+      if (createAccountConfigURL.indexOf('%253A%252F%252F') != -1) {
+          createAccountConfigURL = decodeURIComponent(createAccountConfigURL);
+      }
+      consoleInfo('login.html embedWidget: false, createAccountConfigURL: \/createNewAccount?service%3Dhttps%253A%252F%252Fconnect.garmin.com%252Fmodern%252F%26webhost%3Dhttps%253A%252F%252Fconnect.garmin.com%26source%3Dhttps%253A%252F%252Fsso.garmin.com%252Fsso%252Flogin%26redirectAfterAccountLoginUrl%3Dhttps%253A%252F%252Fconnect.garmin.com%252Fmodern%252F%26redirectAfterAccountCreationUrl%3Dhttps%253A%252F%252Fconnect.garmin.com%252Fmodern%252F%26gauthHost%3Dhttps%253A%252F%252Fsso.garmin.com%252Fsso%26locale%3Den_US%26id%3Dgauth-widget%26cssUrl%3Dhttps%253A%252F%252Fstatic.garmincdn.com%252Fcom.garmin.connect%252Fui%252Fcss%252Fgauth-custom-v1.2-min.css%26clientId%3DGarminConnect%26rememberMeShown%3Dtrue%26rememberMeChecked%3Dfalse%26createAccountShown%3Dtrue%26openCreateAccount%3Dfalse%26usernameShown%3Dfalse%26displayNameShown%3Dfalse%26consumeServiceTicket%3Dfalse%26initialFocus%3Dtrue%26embedWidget%3Dfalse%26generateExtraServiceTicket%3Dfalse, socialEnabled: true, gigyaSupported: true, socialConfigURL(): https://sso.garmin.com/sso/socialSignIn?service%3Dhttps%3A%2F%2Fconnect.garmin.com%2Fmodern%2F%26webhost%3Dhttps%3A%2F%2Fconnect.garmin.com%26source%3Dhttps%3A%2F%2Fsso.garmin.com%2Fsso%2Flogin%26redirectAfterAccountLoginUrl%3Dhttps%3A%2F%2Fconnect.garmin.com%2Fmodern%2F%26redirectAfterAccountCreationUrl%3Dhttps%3A%2F%2Fconnect.garmin.com%2Fmodern%2F%26gauthHost%3Dhttps%3A%2F%2Fsso.garmin.com%2Fsso%26locale%3Den_US%26id%3Dgauth-widget%26cssUrl%3Dhttps%3A%2F%2Fstatic.garmincdn.com%2Fcom.garmin.connect%2Fui%2Fcss%2Fgauth-custom-v1.2-min.css%26clientId%3DGarminConnect%26rememberMeShown%3Dtrue%26rememberMeChecked%3Dfalse%26createAccountShown%3Dtrue%26openCreateAccount%3Dfalse%26usernameShown%3Dfalse%26displayNameShown%3Dfalse%26consumeServiceTicket%3Dfalse%26initialFocus%3Dtrue%26embedWidget%3Dfalse%26generateExtraServiceTicket%3Dfalse');
+
+      if (socialConfigURL.indexOf('%3A%2F%2F') != -1) {
+          socialConfigURL = decodeURIComponent(socialConfigURL);
+      }
+      if( status != null && status != ''){
+          send({'status':status});
+      }
+      jQuery(document).ready( function(){
+          consoleInfo("login.html: setting field validation rules...");
+          jQuery("#username").rules("add",{
+              required: true,
+              messages: {
+                  required:  "Email is required."
+              }});
+          jQuery("#password").rules("add", {
+              required: true,
+              messages: {
+                  required:  "Password is required."
+              }
+          });
+          consoleInfo("login.html: done setting field validation rules...");
+      });
+      XD.receiveMessage(function(m){
+          consoleInfo("login.html: " + m.data + " received on " + window.location.host);
+          if (m && m.data) {
+              var md = m.data;
+              if (typeof(md) === 'string') {
+                  md = JSON.parse(m.data);
+              }
+              if (md.setUsername) {
+                  consoleInfo("login.html: Setting username \"" + md.username + "\"...");
+                  jQuery("#signInWithDiffLink").click(); // Ensure the normal login form is shown.
+                  jQuery("#username").val(md.username);
+                  jQuery("#password").focus();
+              }
+          }
+      }, parentHost);
+  </script>
+</head>
+<body>
+<!-- begin GAuth component -->
+<div id="GAuth-component">
+  <!-- begin login component-->
+  <div id="login-component" class="blueForm-basic">
+    <input type="hidden" id="queryString" value="service=https%3A%2F%2Fconnect.garmin.com%2Fmodern%2F&amp;webhost=https%3A%2F%2Fconnect.garmin.com&amp;source=https%3A%2F%2Fsso.garmin.com%2Fsso%2Flogin&amp;redirectAfterAccountLoginUrl=https%3A%2F%2Fconnect.garmin.com%2Fmodern%2F&amp;redirectAfterAccountCreationUrl=https%3A%2F%2Fconnect.garmin.com%2Fmodern%2F&amp;gauthHost=https%3A%2F%2Fsso.garmin.com%2Fsso&amp;locale=en_US&amp;id=gauth-widget&amp;cssUrl=https%3A%2F%2Fstatic.garmincdn.com%2Fcom.garmin.connect%2Fui%2Fcss%2Fgauth-custom-v1.2-min.css&amp;clientId=GarminConnect&amp;rememberMeShown=true&amp;rememberMeChecked=false&amp;createAccountShown=true&amp;openCreateAccount=false&amp;usernameShown=false&amp;displayNameShown=false&amp;consumeServiceTicket=false&amp;initialFocus=true&amp;embedWidget=false&amp;generateExtraServiceTicket=false" />
+    <input type="hidden" id="contextPath" value="/sso" />
+    <!-- begin login form -->
+    <div id="login-state-default">
+      <h2>Garmin Account Sign In</h2>
+      <form method="post" id="login-form">
+        <div class="form-alert">
+          <div id="login-form-username-errors" style="display:none;"></div>
+          <div id="login-form-password-errors" style="display:none;"></div>
         </div>
-		</div>
-		<script type="text/javascript">
-            jQuery(document).ready(function() {
-                 jQuery("#login-component").children().hide();
-            }); 
-        </script>
-                <script type="text/javascript">
-                    jQuery(document).ready(function() {
-                        consoleInfo('DEFAULT');
-                        jQuery("#login-state-default, #login-create-account, #SSI-component").show();
-                    }); 
-                </script>
-        <script type="text/javascript">
-            jQuery(document).ready(function(){
-                    consoleInfo('casLoginView.jsp: ready, sending height ' + jQuery("#GAuth-component").height());
-                    send({'gauthInitHeight':jQuery("#GAuth-component").height()}); 
-                        jQuery("#username").focus(); 
-                location.href="#";
-                    jQuery('.createAccountLink').click(function(){
-                        send({'openLiteBox':'createAccountLink', 'popupUrl':createAccountConfigURL, 'popupTitle':'Create An Account', 'clientId':'GarminConnect'});
-                    });
+        <div class="textfield">
+          <label for="username">Email</label>
+          <!-- If the lockToEmailAddress parameter is specified then we want to mark the field as readonly,
+          preload the email address, and disable the other input so that null isn't sent to the server. We'll
+          also style the field to have a darker grey background and disable the mouse pointer
+           -->
+          <!-- If the lockToEmailAddress parameter is NOT specified then keep the existing functionality and disable the readonly input field
+             -->
+          <input class="login_email" name="username" id="username" value="" type="email" spellcheck="false" autocorrect="off" autocapitalize="off"/>
+        </div>
+        <div class="textfield">
+          <label for="password">Password</label>
+          <a id="loginforgotpassword" class="login-forgot-password" style="cursor:pointer">(Forgot?)</a>
+          <input type="password" name="password" id="password" spellcheck="false" autocorrect="off" autocapitalize="off" />
+          <strong id="capslock-warning" class="information" title="Caps lock is on." style="display: none;">Caps lock is on.</strong>
+        </div>
+        <input type="hidden" name="embed" value="false"/>
+        <button type="submit" id="login-btn-signin" class="btn1" accesskey="l">Sign In</button>
+        <span>
+	                        <input type="checkbox" name="rememberme" id="login-remember-checkbox" onClick="if (this.checked) { createAccountConfigURL += '&rememberme=on'; socialConfigURL += '&rememberme=on'; } else { createAccountConfigURL = createAccountConfigURL.replace('&rememberme=on', ''); socialConfigURL = socialConfigURL.replace('&rememberme=on', ''); }"/>
+                        	<label id="login-remember" for="login-remember-checkbox">Remember Me</label>
+                        </span>
+
+
+        <!-- The existence of the "rememberme" parameter at all will remember the user! -->
+      </form>
+    </div>
+    <!-- end login form -->
+
+    <!-- begin Create Account message -->
+    <div id="login-create-account">
+	                <span>
+		                <span>Don&#39;t have an account?</span>
+	                    <a href='javascript:void(0)' class="createAccountLink" id="lnkCreateAccount" title="Create Account" >Create One</a>
+					</span>
+    </div>
+    <!-- end Create Account message -->
+    <!-- begin Social Sign In component -->
+    <div id="SSI-component">
+      <div>
+        <h2>Or Sign In with:</h2>
+        <div id="SSI-component">
+
+          <div class="SSI-icons">
+
+            <a href="#" onclick="loginGigya(&#39;facebook&#39;, socialConfigURL, embedWidget, gigyaURL);return false;" id="loginFacebookSI" title="Sign in with Facebook"></a>
+            <a href="#" onclick="loginGigya(&#39;yahoo&#39;, socialConfigURL, embedWidget, gigyaURL);return false;" id="loginYahooSI" title="Sign in with Yahoo!"></a>
+            <a href="#" onclick="loginGigya(&#39;twitter&#39;, socialConfigURL, embedWidget, gigyaURL);return false;" id="loginTwitterSI" title="Sign in with Twitter"></a>
+            <a href="#" onclick="loginGigya(&#39;messenger&#39;, socialConfigURL, embedWidget, gigyaURL);return false;" id="loginWindowsSI" title="Sign in with Windows Live"></a>
+            <a href="#" onclick="loginGigya(&#39;linkedin&#39;, socialConfigURL, embedWidget, gigyaURL);return false;" id="loginLinkedInSI" title="Sign in with LinkedIn"></a>
+
+
+          </div>
+          <script type="text/javascript">
+              jQuery("#toggleIcon").click(function() {
+                  if (jQuery("#chinaExtraSocialLogins").is(":visible")) {
+                      jQuery("#chinaExtraSocialLogins").hide();
+                      jQuery("#toggleIcon").addClass("expand");
+                      jQuery("#toggleIcon").removeClass("collapse");
+                      consoleInfo('createAccount.html collapse-social-icons: send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
+                      send({
+                          'gauthHeight': jQuery("#GAuth-component").height()
+                      });
+                  } else {
+                      jQuery("#chinaExtraSocialLogins").addClass("clear:left");
+                      jQuery("#chinaExtraSocialLogins").show();
+                      jQuery("#toggleIcon").removeClass("expand");
+                      jQuery("#toggleIcon").addClass("collapse");
+                      consoleInfo('createAccount.html expand-social-icons: send({gauthHeight:' + jQuery("#GAuth-component").height() + '});');
+                      send({
+                          'gauthHeight': jQuery("#GAuth-component").height()
+                      });
+                  }
+              });
+          </script>
+          <!-- end Social Sign In component -->
+        </div>
+      </div>
+
+
+    </div>
+    <!-- end Social Sign In component -->
+    <div class="clearfix"></div> <!-- Ensure that GAuth-component div's height is computed correctly. -->
+  </div>
+  <!-- end login component-->
+
+</div>
+<!-- end GAuth component -->
+
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        resizePageOnLoad(jQuery("#GAuth-component").height());
+
+        if(isUsernameDefined == true){
+            // If the user's login just failed, redisplay the email/username specified, and focus them in the password field.
+            jQuery("#password").focus();
+        } else if(true == true && result != "PASSWORD_RESET_RESULT"){
+            // Otherwise focus them in the username field of the login dialog.
+            jQuery("#username").focus();
+        }
+
+        // Scroll to top of iframe to fix problem where Firefox 3.0-3.6 browsers initially show top of iframe cutoff.
+        location.href="#";
+
+        if(!embedWidget){
+            jQuery('.createAccountLink').click(function(){
+                send({'openLiteBox':'createAccountLink', 'popupUrl': createAccountConfigURL, 'popupTitle':'Create An Account', 'clientId':clientId});
             });
-        </script>
-    </body>
+        }
+    });
+</script>
+</body>
 </html>
