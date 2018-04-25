@@ -1,7 +1,6 @@
 package com.weizilla.garmin.fetcher;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
 import com.weizilla.garmin.GarminException;
 import com.weizilla.garmin.configuration.Credentials;
@@ -33,10 +32,8 @@ import java.util.regex.Pattern;
 @Singleton
 public class ActivityFetcher {
     private static final Logger logger = LoggerFactory.getLogger(ActivityFetcher.class);
-    protected static final int DEFAULT_RATE_LIMIT_MS = 1000;
-
     protected static final List<NameValuePair> LOGIN_PARAMS = new ArrayList<>();
-    protected static final String LOGIN_PATH = "/sso/login";
+    private static final List<BasicNameValuePair> LOGIN_DATA = new ArrayList<>();
 
     static {
         LOGIN_PARAMS.add(new BasicNameValuePair("service", "https://connect.garmin.com/modern/"));
@@ -59,17 +56,19 @@ public class ActivityFetcher {
         LOGIN_PARAMS.add(new BasicNameValuePair("initialFocus", "true"));
         LOGIN_PARAMS.add(new BasicNameValuePair("embedWidget", "false"));
         LOGIN_PARAMS.add(new BasicNameValuePair("generateExtraServiceTicket", "false"));
+
+        LOGIN_DATA.add(new BasicNameValuePair("_eventId", "submit"));
+        LOGIN_DATA.add(new BasicNameValuePair("embed", "true"));
+        LOGIN_DATA.add(new BasicNameValuePair("displayNameRequired", "false"));
     }
 
-    private static final BasicNameValuePair EVENT_ID = new BasicNameValuePair("_eventId", "submit");
-    private static final BasicNameValuePair EMBED = new BasicNameValuePair("embed", "true");
-    private static final BasicNameValuePair DISPLAY_NAME = new BasicNameValuePair("displayNameRequired", "false");
-    private static final List<BasicNameValuePair> LOGIN_DATA = Lists.newArrayList(EVENT_ID, EMBED, DISPLAY_NAME);
     private static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.121 Safari/535.2";
 
-    public static final String POST_AUTH_URL = "modern";
+    static final String LOGIN_PATH = "/sso/login";
+    static final String FOLLOW_TICKET_PATH = "/modern";
+    static final String GET_ACTIVITIES_PATH = "/modern/proxy/activitylist-service/activities/search/activities";
 
-    public static final String GET_ACTIVITIES_URL = "/modern/proxy/activitylist-service/activities/search/activities";
+    protected static final int DEFAULT_RATE_LIMIT_MS = 1000;
 
     private final HttpClientFactory clientFactory;
     private final UrlBases urlBases;
@@ -111,7 +110,7 @@ public class ActivityFetcher {
         Thread.sleep(rateLimit);
         try (CloseableHttpResponse response = httpClient.execute(request)) {
             String result = EntityUtils.toString(response.getEntity());
-            logResult("Lt lookup", result);
+            logResult("Get login", result);
         }
     }
 
@@ -133,7 +132,7 @@ public class ActivityFetcher {
         Thread.sleep(rateLimit);
         try (CloseableHttpResponse response = httpClient.execute(request)) {
             String result = EntityUtils.toString(response.getEntity());
-            logResult("Login", result);
+            logResult("submit login", result);
             return parseForTicket(result);
         }
     }
@@ -152,7 +151,7 @@ public class ActivityFetcher {
 
     private void executeFollowTicket(String ticket, CloseableHttpClient httpClient) throws Exception {
         URI uri = new URIBuilder(urlBases.getFollowTicket())
-            .setPath(POST_AUTH_URL)
+            .setPath(FOLLOW_TICKET_PATH)
             .addParameter("ticket", ticket)
             .build();
         HttpUriRequest request = new HttpGet(uri);
@@ -166,7 +165,7 @@ public class ActivityFetcher {
 
     private String executeGetActivities(CloseableHttpClient httpClient) throws Exception {
         URI uri = new URIBuilder(urlBases.getGetActivities())
-            .setPath(GET_ACTIVITIES_URL)
+            .setPath(GET_ACTIVITIES_PATH)
             .build();
         HttpUriRequest request = new HttpGet(uri);
         logRequest("Get activities", request);
@@ -183,13 +182,9 @@ public class ActivityFetcher {
         logger.info("Executing step [{}] {}", name, url);
     }
 
-    private void logResult(String name, String result) throws IOException {
+    private void logResult(String name, String result) {
         if (logConfig.isResult()) {
-            logger.info("Result for {}:\n{}", name, result);
+            logger.info("Result for step [{}]\n{}", name, result);
         }
-    }
-
-    protected int getRateLimit() {
-        return rateLimit;
     }
 }
